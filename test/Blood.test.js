@@ -72,4 +72,22 @@ contract('Blood', ([donor, bank, hosp, admin, bank2]) => {
 
   })
 
+  describe('Hospital', async() =>{
+    let result1, result, temp_length, h_bagcount
+
+    before(async () => {
+      result = await blood.h_showInventory("A")
+      result1 = await blood.h_showInventory("")
+      h_bagcount = await blood.h_bagCount()
+    })
+
+    it('shown inventory', async() => {
+      assert.equal(h_bagcount,3)
+      const event = result.logs[0];
+      console.log(result);
+      console.log("here it isss")
+      console.log(result1)
+    })
+  })
+
 })
