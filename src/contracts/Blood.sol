@@ -9,20 +9,27 @@ contract DateTime {
 
 contract Blood{
     uint public today;
-    address public dateTimeAddr = 0x66eDEfff0A0c87bA4ca2b8E73BB05787eb35908E;
-    address payable public admin = address(0x66eDEfff0A0c87bA4ca2b8E73BB05787eb35908E);
+    address public dateTimeAddr = 0x0935234F7D0851753dC4017985b622AC768EDd42;
+    address payable public admin = address(0x0935234F7D0851753dC4017985b622AC768EDd42);
     DateTime dateTime = DateTime(dateTimeAddr);
     uint[] public temp_array;
     string public name;
     uint public bagCount = 0;
-    uint public h_bagCount = 0;
     mapping(uint => Bloodbag) public bloodbags; // This is the general list of bloodbags.
     mapping(address => uint[]) public donors; // Bloodbags corresponding to donors stored here.
-    mapping(uint => Bloodbag) public hBags; // This is the general list of bloodbags.
+    mapping(address => uint[]) public hospitals; // Bloodbags corresponding to hospitals stored here.
     mapping(address => uint) public usertype; // This mapping is to identify the type of user using the website, i.e
                                               // (1 = donor, 2 = bank and 3 = hospital)
     function getArray(address _donor) public view returns (uint256[] memory) {
         return donors[_donor];
+    }
+
+    function getHbags(address _hospital) public view returns (uint256[] memory) {
+        return hospitals[_hospital];
+    }
+
+    function getTemp() public view returns (uint256[] memory) {
+        return temp_array;
     }
 
     struct Bloodbag {
@@ -50,16 +57,19 @@ contract Blood{
     );
 
     event message(string message);
+    event arr(uint[] array);
 
     constructor() public{
-        name = "Deeeeep";
-        init_hBags();
+        name = "Pranav Gor";
+        usertype[admin] = 14;
+        usertype[0x2eEB28e7Acec6f402ee207d82Ef1F7AABeDb312a] = 3;
+        // init_hospitals
     }
 
     function createBloodbag(uint _donation_date, address payable _donor,
      string memory _blood_group, uint _expiry, string memory _owner_name) public {
         // Require valid params
-        require(usertype[msg.sender] == 2, "Not a blood bank.");
+        // require(usertype[msg.sender] == 2, "Not a blood bank.");
         require(bytes(_owner_name).length > 0, "error in name");
         require(bytes(_blood_group).length > 0, "error in blood group");
         require(_donation_date > 0, "error in d_date");
@@ -69,15 +79,21 @@ contract Blood{
         bagCount ++;
         // Date related stuff
         // Set donor id = 1 if not already exists.
-        usertype[_donor] = 1;
+        if (usertype[_donor] == 0){
+            usertype[_donor] = 1;
+        }
         // Create the Blood bag
         Bloodbag memory temp_bloodbag = Bloodbag(bagCount, _donation_date, _donor, msg.sender, _blood_group, _expiry,
-        _owner_name, msg.sender, 10);
+        _owner_name, msg.sender, 1);
         bloodbags[bagCount] = temp_bloodbag;
+        // add bag to specific donor's list
         donors[_donor].push(temp_bloodbag.id);
+            if (usertype[msg.sender] == 3){ //Hospital ne banaya
+                hospitals[msg.sender].push(temp_bloodbag.id);
+            }
         // Trigger an event
         emit BagCreated(bagCount, _donation_date, _donor, msg.sender, _blood_group, _expiry,
-        _owner_name, msg.sender, 10);
+        _owner_name, msg.sender, 1);
     }
 
     function createBank(address _bank) public {
@@ -92,34 +108,34 @@ contract Blood{
         usertype[_hosp] = 3;
     }
 
-    function compareStrings (string memory a, string memory b) public view returns (bool) {
+    function compareStrings (string memory a, string memory b) public pure returns (bool) {
         return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))) );
     }
-    function init_hBags() public {
-        uint one_day = 3600*24;
-        // donation = Date.now()
-        uint expiry = now + (30*one_day);
-        for (uint i = 0; i < 3; i++) {
-            hBags[i] = Bloodbag(i+20, now + i, admin, admin, 'A', expiry, 'Admin Hospital', admin, 5);
-            h_bagCount ++;
-        }
-        name = 'Back to 2';
-    }
+    // function init_hospitals() public {
+    //     uint one_day = 3600*24;
+    //     // donation = Date.now()
+    //     uint expiry = now + (30*one_day);
+    //     created = Bloodbag(i+20, now + i, admin, admin, 'A', expiry, 'Admin Hospital', 0x2eEB28e7Acec6f402ee207d82Ef1F7AABeDb312a, 5)
+    //     for (uint i = 0; i < 3; i++) {
+    //         hospitals[0x2eEB28e7Acec6f402ee207d82Ef1F7AABeDb312a].push
+    //             ();
+    //     }
+    //     name = 'Back to 2';
+    // }
 
 
-    function h_showInventory(string memory _bg) public returns(uint[] memory){
+    function h_showInventory(string memory _bg) public {
+        address hosp = msg.sender;
+        uint[] memory h_bags = getHbags(hosp);
         if (bytes(_bg).length != 0){
-            for(uint j = 0; j < h_bagCount; j++ ){
-                if (compareStrings(_bg, hBags[j].blood_group)){
-                    temp_array.push(hBags[j].id);
+            for(uint j = 0; j < h_bags.length; j++ ){
+                Bloodbag memory bb = bloodbags[h_bags[j]];
+                if (compareStrings(_bg, bb.blood_group)){
+                    temp_array.push(bb.id);
                 }
             }
-            return temp_array;
         } else {
-            for(uint j = 0; j < h_bagCount; j++ ){
-                    temp_array.push(hBags[j].id);
-            }
-            return temp_array;
+            temp_array = getHbags(msg.sender);
         }
     }
 

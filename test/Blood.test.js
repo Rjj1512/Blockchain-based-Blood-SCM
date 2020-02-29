@@ -25,6 +25,8 @@ contract('Blood', ([donor, bank, hosp, admin, bank2]) => {
     let result, bagCount, donation, expiry, event
 
     before(async () => {
+      const a = await blood.usertype(admin)
+      console.log(a.toNumber())
       await blood.createBank(bank, {from: admin}) // Bank and Hospital added using admin
       await blood.createBank(bank2, {from: admin})
       await blood.createHosp(hosp, {from: admin})
@@ -73,20 +75,18 @@ contract('Blood', ([donor, bank, hosp, admin, bank2]) => {
   })
 
   describe('Hospital', async() =>{
-    let result1, result, temp_length, h_bagcount
+    let event, donation, expiry
 
     before(async () => {
-      result = await blood.h_showInventory("A")
-      result1 = await blood.h_showInventory("")
-      h_bagcount = await blood.h_bagCount()
+      var one_day = 3600*24
+      donation = Date.now()
+      expiry = donation+(30*one_day)
+      await blood.createBloodbag(donation, donor, "A+", expiry, "Baap hospital", { from: hosp })
+      await blood.createBloodbag(donation, donor, "AB-", expiry, "Baap hospital", { from: hosp })
     })
 
-    it('shown inventory', async() => {
-      assert.equal(h_bagcount,3)
-      const event = result.logs[0];
-      console.log(result);
-      console.log("here it isss")
-      console.log(result1)
+    it('shows inventory', async() => {
+      console.log(await blood.getHbags(hosp))
     })
   })
 
