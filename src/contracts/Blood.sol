@@ -1,5 +1,5 @@
 pragma solidity >=0.4.21 <0.6.0;
-
+pragma experimental ABIEncoderV2;
 
 contract DateTime {
         function getYear(uint timestamp) public returns (uint16);
@@ -9,12 +9,14 @@ contract DateTime {
 
 contract Blood{
     uint public today;
-    address public dateTimeAddr = 0x0935234F7D0851753dC4017985b622AC768EDd42;
-    address payable public admin = address(0x0935234F7D0851753dC4017985b622AC768EDd42);
+    address public dateTimeAddr = 0x66eDEfff0A0c87bA4ca2b8E73BB05787eb35908E;
+    address payable public admin = address(0x66eDEfff0A0c87bA4ca2b8E73BB05787eb35908E);
     DateTime dateTime = DateTime(dateTimeAddr);
     uint[] public temp_array;
     string public name;
     uint public bagCount = 0;
+    uint public b_bagCount = 0;
+    uint public h_bagCount = 0;
     mapping(uint => Bloodbag) public bloodbags; // This is the general list of bloodbags.
     mapping(address => uint[]) public donors; // Bloodbags corresponding to donors stored here.
     mapping(address => uint[]) public hospitals; // Bloodbags corresponding to hospitals stored here.
@@ -41,7 +43,7 @@ contract Blood{
         uint expiry;
         string owner_name;
         address payable owner;
-        uint price;
+        // uint price;
     }
 
     event BagCreated(
@@ -52,12 +54,23 @@ contract Blood{
         string blood_group,
         uint expiry,
         string owner_name,
-        address payable owner,
-        uint price
+        address payable owner
+        // uint price
     );
 
     event message(string message);
     event arr(uint[] array);
+    event bagPurchased(
+        uint id,
+        uint donation_date,
+        address payable donor,
+        address payable bank,
+        string blood_group,
+        uint expiry,
+        string owner_name,
+        address payable owner
+        // uint price
+    );
 
     constructor() public{
         name = "Pranav Gor";
@@ -84,16 +97,19 @@ contract Blood{
         }
         // Create the Blood bag
         Bloodbag memory temp_bloodbag = Bloodbag(bagCount, _donation_date, _donor, msg.sender, _blood_group, _expiry,
-        _owner_name, msg.sender, 1);
+        _owner_name, msg.sender);
         bloodbags[bagCount] = temp_bloodbag;
+        b_bagCount ++;
         // add bag to specific donor's list
         donors[_donor].push(temp_bloodbag.id);
             if (usertype[msg.sender] == 3){ //Hospital ne banaya
                 hospitals[msg.sender].push(temp_bloodbag.id);
+                h_bagCount ++;
+                b_bagCount --;
             }
         // Trigger an event
         emit BagCreated(bagCount, _donation_date, _donor, msg.sender, _blood_group, _expiry,
-        _owner_name, msg.sender, 1);
+        _owner_name, msg.sender);
     }
 
     function createBank(address _bank) public {
@@ -124,28 +140,95 @@ contract Blood{
     // }
 
 
-    function h_showInventory(string memory _bg) public {
-        address hosp = msg.sender;
-        uint[] memory h_bags = getHbags(hosp);
-        if (bytes(_bg).length != 0){
-            for(uint j = 0; j < h_bags.length; j++ ){
-                Bloodbag memory bb = bloodbags[h_bags[j]];
-                if (compareStrings(_bg, bb.blood_group)){
-                    temp_array.push(bb.id);
-                }
-            }
-        } else {
-            temp_array = getHbags(msg.sender);
+    // function h_showInventory(string memory _bg) public {
+    //     address hosp = msg.sender;
+    //     uint[] memory h_bags = getHbags(hosp);
+    //     if (bytes(_bg).length != 0){
+    //         for(uint j = 0; j < h_bags.length; j++ ){
+    //             Bloodbag memory bb = bloodbags[h_bags[j]];
+    //             if (compareStrings(_bg, bb.blood_group)){
+    //                 temp_array.push(bb.id);
+    //             }
+    //         }
+    //     } else {
+    //         temp_array = getHbags(msg.sender);
+    //     }
+    // }
+    Bloodbag[] public Allbags;
+    Bloodbag[] temp;
+    mapping(address => uint) counts;
+
+    function getAllBags() public {
+        for(uint k = 0; k < bagCount; k++){
+            Allbags.push(bloodbags[k]);
         }
     }
 
-    // function h_placeOrder() public {
+
+    function filterBags(address _hosp, string memory _bg) public returns(Bloodbag[] memory) {
+        getAllBags();
+        for (uint i = 0; i < Allbags.length; i++){
+            if ((Allbags[i].owner != _hosp) && (compareStrings(Allbags[i].blood_group, _bg))){
+                temp.push(Allbags[i]);
+            }
+        }
+
+        return temp;
+    }
+    bool[] visited;
+
+    // function getCounts(Bloodbag[] memory _input, uint _leng) public {
+    //     uint[] memory countsss;
+    //     address[] memory list;
+    //     for (uint i = 0; i <= _leng; i++ ){
+    //         visited[i] = false;
+    //     }
+
+    //     for (uint i = 0; i < _leng; i++) {
+    //     // Skip this element if already processed
+    //         if (visited[i] == true)
+    //             continue;
+
+    //         // Count frequency
+    //         uint count = 1;
+    //         for (uint j = i + 1; j < _leng; j++) {
+    //             if (_input[i].owner == _input[j].owner) {
+    //                 visited[j] = true;
+    //                 count++;
+    //             }
+    //         }
+    //         countsss[i] = count;
+    //         list[i] = _input.owner;
+    //     }
+
 
     // }
 
-    // function bb_accept_order() public {
-
-    // }
+    function h_placeOrder(address payable _hosp, address payable _bank,
+     string memory _bg, uint _amount, string memory _name) public payable {
+        Bloodbag[] memory temp1;
+        temp1 = filterBags(_hosp, _bg);
+        // bool f = false;
+        // uint leng = temp1.length;
+        // getCounts(temp1, leng);
+        // Bloodbag[] memory finale;
+        // mapping(address => uint) counts;
+        require(_amount != 0, 'Number of Bags unspecified');
+        require(msg.sender == _hosp, 'Unauthorized transaction originator');
+        uint total = 10 * _amount;
+        address(_bank).transfer(total);
+        //we need to get the bank address and also the ID of the bags to be purchased, for further processing from Frontend
+        // assuming we got two id here for an example:-
+        uint[] memory _ids;
+        _ids[0] = 2;
+        _ids[1] = 4;
+        for (uint i = 0; i < _ids.length; i++ ){
+            Bloodbag memory b = bloodbags[_ids[i]];
+            bloodbags[_ids[i]].owner = msg.sender;
+            bloodbags[_ids[i]].owner_name = _name;
+            emit bagPurchased(b.id, b.donation_date, b.donor, b.bank, b.blood_group,b.expiry,b.owner_name,b.owner);
+        }
+    }
 
 
 }

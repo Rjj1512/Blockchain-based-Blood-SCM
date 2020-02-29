@@ -4,7 +4,7 @@ require('chai')
   .use(require('chai-as-promised'))
   .should()
 
-contract('Blood', ([donor, bank, hosp, admin, bank2]) => {
+contract('Blood', ([donor, bank, hosp, admin, bank2, extra_acc]) => {
   let blood
 
   before(async () => { 
@@ -34,13 +34,17 @@ contract('Blood', ([donor, bank, hosp, admin, bank2]) => {
       donation = Date.now()
       expiry = donation+(30*one_day)
       await blood.createBloodbag(donation, donor, "AB+", expiry, "Jamnavati blood bank", { from: bank2 })
+      await blood.createBloodbag(donation, donor, "AB-", expiry, "Jamnavati blood bank", { from: bank2 })
+      await blood.createBloodbag(donation, donor, "AB+", expiry, "Jamnavati blood bank", { from: bank2 })
+      await blood.createBloodbag(donation, donor, "AB-", expiry, "Jamnavati blood bank", { from: bank2 })
+
       result = await blood.createBloodbag(donation, donor, "A+", expiry, "Lilavati blood bank", { from: bank })
       bagCount = await blood.bagCount()
     })
 
     it('creates bags', async () => {
       // SUCCESS
-      assert.equal(bagCount, 2)
+      assert.equal(bagCount, 5)
       const event = result.logs[0].args
       assert.equal(event.id.toNumber(), bagCount.toNumber(), 'id is correct')
       assert.equal(event.donation_date.toNumber(), donation, 'donation_date is correct')
@@ -75,19 +79,34 @@ contract('Blood', ([donor, bank, hosp, admin, bank2]) => {
   })
 
   describe('Hospital', async() =>{
-    let event, donation, expiry
+    let event, donation, expiry, result
 
     before(async () => {
       var one_day = 3600*24
       donation = Date.now()
       expiry = donation+(30*one_day)
-      await blood.createBloodbag(donation, donor, "A+", expiry, "Baap hospital", { from: hosp })
-      await blood.createBloodbag(donation, donor, "AB-", expiry, "Baap hospital", { from: hosp })
+      // await blood.createBloodbag(donation, donor, "A+", expiry, "Baap hospital", { from: hosp })
+      // await blood.createBloodbag(donation, donor, "AB-", expiry, "Yeh Marega hospital", { from: extra_acc })
+      // await blood.createBloodbag(donation, donor, "A-", expiry, "Yeh Marega hospital", { from: extra_acc })
+      // await blood.createBloodbag(donation, donor, "B-", expiry, "Yeh Marega hospital", { from: extra_acc })
+      // await blood.createBloodbag(donation, donor, "AB-", expiry, "Yeh Marega hospital", { from: extra_acc })
+
+      // await blood.createBloodbag(donation, donor, "AB-", expiry, "Baap hospital", { from: hosp })
+      // await blood.createBloodbag(donation, donor, "AB-", expiry, "Baap hospital", { from: hosp })
+      // await blood.createBloodbag(donation, donor, "AB-", expiry, "Baap hospital", { from: hosp })
+      // await blood.createBloodbag(donation, donor, "A+", expiry, "Baap hospital", { from: hosp })
+      // await blood.createBloodbag(donation, donor, "AB-", expiry, "Baap hospital", { from: hosp })
+      // result = await blood.h_showInventory("AB-", {from: hosp})
+      await blood.h_placeOrder(hosp, bank2, 'AB-', 2, "Yeh Marega Hospital", { from: hosp })
+
     })
 
     it('shows inventory', async() => {
       console.log(await blood.getHbags(hosp))
+      // event = result.logs[0]
+      // console.log(result)
     })
+
   })
 
 })
