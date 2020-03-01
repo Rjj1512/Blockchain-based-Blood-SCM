@@ -10,6 +10,10 @@ import Admin from './Admin'
 
 class App extends Component {
 
+
+  // var d = new Date(1382086394000);
+  // alert(d.getDate() + '/' + (d.getMonth()+1) + '/' + d.getFullYear());
+
   async componentWillMount() {
     await this.loadWeb3()
     await this.loadBlockchainData()
@@ -42,19 +46,32 @@ class App extends Component {
       this.setState({ bagCount })
       const userCount = await blood.methods.userCount().call()
       this.setState({ userCount: userCount })
-      // Load products
+      // Load bloodbags
       for (var i = 1; i <= bagCount; i++) {
         const bag = await blood.methods.bloodbags(i).call()
         this.setState({
           bloodbags: [...this.state.bloodbags, bag]
         })
       }
+      console.log(this.state.bloodbags)
       // Load users
       for (var i = 1; i <= userCount; i++) {
         const user = await blood.methods.users(i).call()
         this.setState({
           users: [...this.state.users, user]
         })
+      }
+      // Load usertype mapping
+      for (var i = 1; i <= userCount; i++) {
+        const user = await blood.methods.users(i).call()
+        const address = user.user_address
+        // console.log(address)
+        this.setState(prevState => ({
+          usertype: {                   // object that we want to update
+              ...prevState.usertype,    // keep all other key-value pairs
+              [address]: user       // update the value of specific key
+          }
+      }))
       }
       const account_type = await blood.methods.usertype(accounts[0]).call()
       console.log(account_type.id, account_type.user_type)
@@ -72,6 +89,7 @@ class App extends Component {
       bagCount: 0,
       bloodbags: [],
       users: [],
+      usertype: {},
       loading: true
     }
 
@@ -80,9 +98,12 @@ class App extends Component {
     this.createHosp = this.createHosp.bind(this);
   }
 
-  createBloodbag(donation, donor, bloodgroup, expiry, owner_name) {
+  createBloodbag(donor, donor_name, bloodgroup, exp) {
+    var today = new Date().getTime();
+    var donation = Math.round(today / 1000);
+    var expiry = donation + 86400*exp;
     this.setState({ loading: true })
-    this.state.blood.methods.createBloodbag(donation, donor, bloodgroup, expiry, owner_name).send({ from: this.state.account })
+    this.state.blood.methods.createBloodbag(donation, donor, donor_name, bloodgroup, expiry).send({ from: this.state.account })
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
@@ -113,7 +134,10 @@ class App extends Component {
                 donorbags={this.state.donorbags} />;
     } else if(acc_type === 2) {
       dothis = <Bank
-                bags={this.state.bags}
+                bags={this.state.bloodbags}
+                users={this.state.users}
+                usertype={this.state.usertype}
+                account={this.state.account}
                 createBloodbag={this.createBloodbag} />;
     } else if(acc_type === 3){
       dothis = <Hospital

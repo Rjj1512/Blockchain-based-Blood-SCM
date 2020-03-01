@@ -5,11 +5,11 @@ class Admin extends Component {
 
     render() {
       return (
-        <div id="content">
+        <div id="content" style={{justifyContent:'center', width:'100%'}}>
           <h1 className="head">Welcome <strong>Admin.</strong></h1>
         <br/>
         <h3>Add Bank</h3>
-        <div className="button-container">
+        <div className="button-container" >
         <form onSubmit={(event) => {
           event.preventDefault()
           const name = event.target[0].value
@@ -17,7 +17,7 @@ class Admin extends Component {
           this.props.createBank(address, name)
         }}>
           <div className="form-group mr-sm-2">
-            <input
+            <input 
               id="userName"
               type="text"
               ref={(input) => { this.userName = input }}
@@ -40,8 +40,8 @@ class Admin extends Component {
         <br/>
         <p>&nbsp;</p>
         <h3>Add Hospital</h3>
-        <div class="button-container">
-        <form class="form-inline" onSubmit={(event) => {
+        <div className="button-container">
+        <form className="form-inline" onSubmit={(event) => {
           event.preventDefault()
           const name = event.target[0].value
           const address = event.target[1].value
@@ -80,7 +80,7 @@ class Admin extends Component {
             </tr>
           </thead>
           <tbody id="User list">
-            { this.props.users.map((user, key) => {
+            { this.props.users.reverse().slice(0,10).map((user, key) => {
               return(
                 <tr key={key}>
                   <th scope="row">{user.id.toString()}</th>
