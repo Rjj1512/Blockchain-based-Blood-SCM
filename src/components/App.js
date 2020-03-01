@@ -40,6 +40,8 @@ class App extends Component {
       this.setState({ blood })
       const bagCount = await blood.methods.bagCount().call()
       this.setState({ bagCount })
+      const userCount = await blood.methods.userCount().call()
+      this.setState({ userCount: userCount })
       // Load products
       for (var i = 1; i <= bagCount; i++) {
         const bag = await blood.methods.bloodbags(i).call()
@@ -47,8 +49,16 @@ class App extends Component {
           bloodbags: [...this.state.bloodbags, bag]
         })
       }
+      // Load users
+      for (var i = 1; i <= userCount; i++) {
+        const user = await blood.methods.users(i).call()
+        this.setState({
+          users: [...this.state.users, user]
+        })
+      }
       const account_type = await blood.methods.usertype(accounts[0]).call()
-      this.setState({ acc_type: account_type.toNumber() })
+      console.log(account_type.id, account_type.user_type)
+      this.setState({ acc_type: account_type.user_type.toNumber() })
       this.setState({ loading: false})
     } else {
       window.alert('Contract not deployed to detected network.')
@@ -61,10 +71,13 @@ class App extends Component {
       account: '',
       bagCount: 0,
       bloodbags: [],
+      users: [],
       loading: true
     }
 
     this.createBloodbag = this.createBloodbag.bind(this)
+    this.createBank = this.createBank.bind(this);
+    this.createHosp = this.createHosp.bind(this);
   }
 
   createBloodbag(donation, donor, bloodgroup, expiry, owner_name) {
@@ -74,6 +87,23 @@ class App extends Component {
       this.setState({ loading: false })
     })
   }
+
+  createBank(bank, name) {
+    this.setState({ loading: true })
+    this.state.blood.methods.createBank(bank,name).send({ from: this.state.account })
+    .once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
+  }
+
+  createHosp(hosp, name) {
+    this.setState({ loading: true })
+    this.state.blood.methods.createHosp(hosp,name).send({ from: this.state.account })
+    .once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
+  }
+
   render() {
     const acc_type = this.state.acc_type;
     let dothis;
@@ -90,7 +120,10 @@ class App extends Component {
                 donorbags={this.state.donotbags}
                 createBloodbag={this.createBloodbag} />;
     } else if(acc_type === 14){
-      dothis = <Admin/>;
+      dothis = <Admin
+                users={this.state.users}
+                createBank={this.createBank}
+                createHosp={this.createHosp} />;
     } else {
       dothis = <h1>I'm sorry, you are not an authorized user for this application.</h1>
     }

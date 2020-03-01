@@ -1,0 +1,16 @@
+.head {
+    text-align: center;
+}
+
+.button-container form,
+.button-container form div {
+    float: left;
+}
+
+.button-container button {
+    vertical-align: middle;
+}
+
+.clr {
+    clear:both;
+}
