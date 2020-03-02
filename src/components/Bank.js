@@ -20,8 +20,8 @@ class Bank extends Component {
           this.props.createBloodbag(donor, donor_name, blood_group, expiry)
         }}>
           <div className="form-group row">
-          <label  class="col-md-2 col-form-label"> <h6>Donor address :</h6> </label>
-            <div class="col-sm-10">
+          <label className="col-md-2 col-form-label"> <h6>Donor address :</h6> </label>
+            <div className="col-sm-10">
             <input 
               id="address"
               type="text"
@@ -32,8 +32,8 @@ class Bank extends Component {
             </div>
           </div>
           <div className="form-group row">
-          <label  class="col-md-2 col-form-label"> <h6>Donor name :</h6> </label>
-            <div class="col-sm-10">
+          <label  className="col-md-2 col-form-label"> <h6>Donor name :</h6> </label>
+            <div className="col-sm-10">
             <input 
               id="userName"
               type="text"
@@ -44,8 +44,8 @@ class Bank extends Component {
             </div>
           </div>
           <div className="form-group row">
-          <label  class="col-md-2 col-form-label"> <h6>Blood group :</h6> </label>
-            <div class="col-sm-10">
+          <label  className="col-md-2 col-form-label"> <h6>Blood group :</h6> </label>
+            <div className="col-sm-10">
             <input 
               id="userName"
               type="text"
@@ -56,8 +56,8 @@ class Bank extends Component {
             </div>
           </div>
           <div className="form-group row">
-          <label  class="col-md-2 col-form-label"> <h6>Expiry :</h6> </label>
-            <div class="col-sm-10">
+          <label  className="col-md-2 col-form-label"> <h6>Expiry :</h6> </label>
+            <div className="col-sm-10">
             <input 
               id="userName"
               type="text"
@@ -77,7 +77,9 @@ class Bank extends Component {
             <tr>
               <th scope="col">#</th>
               <th scope="col">Donor</th>
+              <th scope="col">Donor Address</th>
               <th scope="col">Collector Bank</th>
+              <th scope="col">Bank Address</th>
               <th scope="col">Owner</th>
               <th scope="col">Blood Group</th>
             </tr>
@@ -85,18 +87,20 @@ class Bank extends Component {
           <tbody id="Blood bag list">
           {/* {console.log(this.props.usertype)} */}
             { this.props.bags.reverse().slice(0,10).map((bag, key) => {
-              if (bag.bank == this.props.account){
+              if (bag.bank === this.props.account){
               return(
                 <tr key={key}>
                   <th scope="row">{bag.id.toString()}</th>
-                  <td>{this.props.usertype[bag.donor].name} {bag.donor}</td>
-                  <td>{this.props.usertype[bag.bank].name} {bag.bank}</td>
-                  <td>{this.props.usertype[bag.owner].name} {bag.owner}</td>
+                  <td>{this.props.usertype[bag.donor].name}</td>
+                  <td>{bag.donor}</td>
+                  <td>{this.props.usertype[bag.bank].name}</td>
+                  <td>{bag.bank}</td>
+                  <td>{bag.owner}</td>
                   <td>{bag.blood_group}</td>
                 </tr>
               )
               }
-            })}
+            })} 
           </tbody>
         </table>
 
