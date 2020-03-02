@@ -53,7 +53,7 @@ class App extends Component {
           bloodbags: [...this.state.bloodbags, bag]
         })
       }
-      console.log(this.state.bloodbags)
+      // console.log(this.state.bloodbags)
       // Load users
       for (var i = 1; i <= userCount; i++) {
         const user = await blood.methods.users(i).call()
@@ -65,7 +65,6 @@ class App extends Component {
       for (var i = 1; i <= userCount; i++) {
         const user = await blood.methods.users(i).call()
         const address = user.user_address
-        // console.log(address)
         this.setState(prevState => ({
           usertype: {                   // object that we want to update
               ...prevState.usertype,    // keep all other key-value pairs
@@ -74,9 +73,21 @@ class App extends Component {
       }))
       }
       const account_type = await blood.methods.usertype(accounts[0]).call()
-      console.log(account_type.id, account_type.user_type)
       this.setState({ acc_type: account_type.user_type.toNumber() })
       this.setState({ loading: false})
+      // Load Donor bags
+      if(this.state.acc_type == 1){
+        const arr = await blood.methods.getDbags(this.state.account).call()
+        const len = arr.length
+        // console.log(this.state.bloodbags[1])
+        // console.log(arr[0].toNumber(),arr[1].toNumber(),arr[2].toNumber())
+        for (var i = 0; i < len; i++) {
+          this.setState({
+            donorbags: [...this.state.donorbags, this.state.bloodbags[arr[i].toNumber()]]
+          })
+        }
+      }
+      // console.log ho ja bhai
     } else {
       window.alert('Contract not deployed to detected network.')
     }
@@ -88,6 +99,7 @@ class App extends Component {
       account: '',
       bagCount: 0,
       bloodbags: [],
+      donorbags: [],
       users: [],
       usertype: {},
       loading: true
@@ -130,8 +142,10 @@ class App extends Component {
     let dothis;
 
     if (acc_type === 1) {
+      console.log(this.state.donorbags)
       dothis = <Donor
-                donorbags={this.state.donorbags} />;
+                bloodbags={this.state.bloodbags}
+                account={this.state.account} />;
     } else if(acc_type === 2) {
       dothis = <Bank
                 bags={this.state.bloodbags}
