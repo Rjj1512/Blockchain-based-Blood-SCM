@@ -53,7 +53,7 @@ class App extends Component {
           bloodbags: [...this.state.bloodbags, bag]
         })
       }
-      // console.log(this.state.bloodbags)
+      console.log(this.state.bloodbags)
       // Load users
       for (var i = 1; i <= userCount; i++) {
         const user = await blood.methods.users(i).call()
@@ -85,6 +85,8 @@ class App extends Component {
           this.setState({
             donorbags: [...this.state.donorbags, this.state.bloodbags[arr[i].toNumber()]]
           })
+          console.log("here are the donor bags")
+          console.log(this.state.donorbags)
         }
       }
       // console.log ho ja bhai
@@ -107,7 +109,10 @@ class App extends Component {
 
     this.createBloodbag = this.createBloodbag.bind(this)
     this.createBank = this.createBank.bind(this);
+    this.h_placeOrder = this.h_placeOrder.bind(this);
     this.createHosp = this.createHosp.bind(this);
+    this.showInv = this.showInv.bind(this);
+
   }
 
   createBloodbag(donor, donor_name, bloodgroup, exp) {
@@ -137,6 +142,25 @@ class App extends Component {
     })
   }
 
+  h_placeOrder(id) {
+    this.setState({ loading: true})
+    const price = window.web3.utils.fromWei('15000000000000000000', 'Ether')
+    console.log(id)
+    this.state.blood.methods.h_placeOrder(id).send({ from: this.state.account, value: price })
+    // .once('receipt', (receipt) => {
+    //   this.setState({ loading: false})
+    // })
+  }
+
+  showInv( quantity, bloodgroup ) {
+    this.setState({ loading: true})
+    console.log("Bag count is :");
+    const len = this.state.bagCount
+    for (let i =0; i < len.toNumber(); i++){
+
+    }
+  }
+
   render() {
     const acc_type = this.state.acc_type;
     let dothis;
@@ -155,7 +179,13 @@ class App extends Component {
                 createBloodbag={this.createBloodbag} />;
     } else if(acc_type === 3){
       dothis = <Hospital
-                donorbags={this.state.donotbags}
+                donorbags={this.state.donorbags}
+                bags={this.state.bloodbags}
+                users={this.state.users}
+                usertype={this.state.usertype}
+                account={this.state.account}
+                h_placeOrder = {this.h_placeOrder}
+                showInv = {this.showInv}
                 createBloodbag={this.createBloodbag} />;
     } else if(acc_type === 14){
       dothis = <Admin
