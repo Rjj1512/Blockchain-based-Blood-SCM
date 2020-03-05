@@ -77,9 +77,7 @@ class Bank extends Component {
             <tr>
               <th scope="col">#</th>
               <th scope="col">Donor</th>
-              <th scope="col">Donor Address</th>
               <th scope="col">Collector Bank</th>
-              <th scope="col">Bank Address</th>
               <th scope="col">Owner</th>
               <th scope="col">Blood Group</th>
             </tr>
@@ -90,12 +88,10 @@ class Bank extends Component {
               if (bag.bank === this.props.account){
               return(
                 <tr key={key}>
-                  <th scope="row">{bag.id.toString()}</th>
-                  <td>{this.props.usertype[bag.donor].name}</td>
-                  <td>{bag.donor}</td>
-                  <td>{this.props.usertype[bag.bank].name}</td>
-                  <td>{bag.bank}</td>
-                  <td>{bag.owner}</td>
+                  <th scope="row">{bag.id.toString()} Address:</th>
+                  <td>{this.props.usertype[bag.donor].name} {bag.donor}</td>
+                  <td>{this.props.usertype[bag.bank].name} {bag.bank}</td>
+                  <td>{this.props.usertype[bag.owner].name} {bag.owner}</td>
                   <td>{bag.blood_group}</td>
                 </tr>
               )

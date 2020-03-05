@@ -73,6 +73,8 @@ class App extends Component {
       }))
       }
       const account_type = await blood.methods.usertype(accounts[0]).call()
+      console.log(accounts[0])
+      console.log(account_type)
       this.setState({ acc_type: account_type.user_type.toNumber() })
       this.setState({ loading: false})
       // Load Donor bags
