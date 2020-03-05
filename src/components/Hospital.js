@@ -8,46 +8,37 @@ class Hospital extends Component {
       <div id="content" style={{ justifyContent: 'center', width: '100%' }}>
         <h1 className="head">Welcome <strong>Hospital.</strong></h1>
         <br />
-
-        <form onSubmit={(event) => {
-          event.preventDefault()
-          const quan = event.target[0].value
-          const bg = event.target[1].value
-          // const donor_name = event.target[1].values
-          this.props.showInv(quan, bg)
-        }}>
-          <div className="form-group row">
-            <label className="col-md-2 col-form-label"> <h6>Number of Bags :</h6> </label>
-            <div className="col-sm-10">
-              <input
-                id="quantity"
-                type="text"
-                ref={(input) => { this.Quantity = input }}
-                className="form-control"
-                placeholder="Quanitiy of Bags to be ordered"
-              />
-            </div>
-          </div>
-
-          <div className="form-group row">
-            <label className="col-md-2 col-form-label"> <h6>Blood Group :</h6> </label>
-            <div className="col-sm-10">
-              <input
-                id="bg"
-                type="text"
-                ref={(input) => { this.bg = input }}
-                className="form-control"
-                placeholder="Blood Group selected"
-              />
-            </div>
-          </div>
-
-          <button style={{ justifyContent: 'center' }} type="submit" className="btn btn-primary">Show Options</button>
+        <h4 style={{ justifyContent: 'center' }}>Your Current Inventory</h4>
+        <form>
+          <table className="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Collector Bank's (Name and Address)</th>
+                <th scope="col">Blood Group</th>
+              </tr>
+            </thead>
+            <tbody id="Options list">
+              {this.props.bags.reverse().slice(0, 10).map((bag, key) => {
+                if (bag.owner === this.props.account) {
+                  let a = bag.id.toNumber()
+                  console.log(a)
+                  return (
+                    <tr key={key}>
+                      <th scope="row">{bag.id.toString()}</th>
+                      <td>{bag.owner_name} <br /> {bag.bank} </td>
+                      <td>{bag.blood_group}</td>
+                    </tr>
+                  )
+                }
+              })}
+            </tbody>
+          </table>
         </form>
 
         <p>&nbsp;</p>
         <p>&nbsp;</p>
-        <form onSubmit = {(event) => {
+        <form onSubmit={(event) => {
           event.preventDefault()
         }}>
           <table className="table">
@@ -63,8 +54,8 @@ class Hospital extends Component {
             <tbody id="Options list">
               {this.props.bags.reverse().slice(0, 10).map((bag, key) => {
                 if (bag.owner !== this.props.account) {
-                    let a = bag.id.toNumber()
-                    console.log(a)
+                  let a = bag.id.toNumber()
+                  console.log(a)
                   return (
                     <tr key={key}>
                       <th scope="row">{bag.id.toString()}</th>
@@ -72,7 +63,7 @@ class Hospital extends Component {
                       <td>{this.props.usertype[bag.owner].name} <br /> {bag.owner} </td>
                       <td>{bag.blood_group}</td>
                       <th scope="row">
-                      <button
+                        <button
                           name={bag.id.toNumber()}
                           className="btn btn-primary"
                           onClick={(event) => {
