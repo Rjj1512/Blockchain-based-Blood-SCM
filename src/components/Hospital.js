@@ -45,10 +45,6 @@ class Hospital extends Component {
             </tbody>
           </table>
         </form>
-
-        <p>&nbsp;</p>
-        <p>&nbsp;</p>
-        <h4 style={{ justifyContent: 'center' }}>Available Bloodbags in Banks</h4>
         <form onSubmit={(event) => {
           event.preventDefault()
         }}>
@@ -57,7 +53,7 @@ class Hospital extends Component {
               <tr>
                 <th scope="col">#</th>
                 <th scope="col">Collector Bank's (Name and Address)</th>
-                <th scope="col">Current Owner's (Name and Address)</th>
+                <th scope="col">Current Owner's Name and Address</th>
                 <th scope="col">Blood Group</th>
                 <th scope="col">Action</th>
               </tr>
@@ -65,7 +61,6 @@ class Hospital extends Component {
             <tbody id="Options list">
               {this.props.bags.reverse().slice(0, 10).map((bag, key) => {
                 if (bag.owner !== this.props.account) {
-                  // let newrow = 
                   let a = bag.id.toNumber()
                   console.log(a)
                   return (
