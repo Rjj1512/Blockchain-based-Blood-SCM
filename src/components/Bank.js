@@ -6,7 +6,8 @@ class Bank extends Component {
     render() {
       return (
         <div id="content" style={{justifyContent:'center', width:'100%'}}>
-          <h1 className="head">Welcome <strong>Bank.</strong></h1>
+          
+          <h1 className="head">Welcome <strong>{this.props.usertype[this.props.account].name}.</strong></h1>
           <br/>
         <h3 >Add Bank</h3>
         <br/>
