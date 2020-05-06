@@ -17,7 +17,7 @@ class Donor extends Component {
             { this.props.bloodbags.reverse().slice(0,10).map((bag, key) => {
               const expiry = (new Date(bag.expiry * 1000)).toString()
               const trig = '<h4 > Bag ID :- ' + (bag.id).toString() + ' <h4> <h6>click to view details</h6>'
-              if (bag.donor == this.props.account){
+              if (bag.donor === this.props.account){
               return(
                 <Collapsible 
                 triggerStyle={{ background: 'darkgray' }}

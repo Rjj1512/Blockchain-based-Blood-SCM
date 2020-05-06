@@ -10,8 +10,8 @@ pragma experimental ABIEncoderV2;
 contract Blood{
     // uint public today;
     // address public dateTimeAddr = 0x66eDEfff0A0c87bA4ca2b8E73BB05787eb35908E;
-    address payable public admin = address(0xcce6f401fB61247aA833A451cAd741b4a49Ca954);
-    address payable public hospi = address(0x88223b9922EF576A9FF562e2C9FC890bfC6B92bd);
+    address payable public admin = address(0x993ea21A23fE094aF6D053000EB022dEcd83C513);
+    address payable public hospi = address(0x7340C15749cD4efbf70034D565d82b7d908860E2);
     // DateTime dateTime = DateTime(dateTimeAddr);
     string public name;
     uint public bagCount = 0;

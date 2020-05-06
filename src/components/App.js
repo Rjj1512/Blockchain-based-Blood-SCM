@@ -55,14 +55,14 @@ class App extends Component {
       }
       console.log(this.state.bloodbags)
       // Load users
-      for (var i = 1; i <= userCount; i++) {
+      for (i = 1; i <= userCount; i++) {
         const user = await blood.methods.users(i).call()
         this.setState({
           users: [...this.state.users, user]
         })
       }
       // Load usertype mapping
-      for (var i = 1; i <= userCount; i++) {
+      for (i = 1; i <= userCount; i++) {
         const user = await blood.methods.users(i).call()
         const address = user.user_address
         this.setState(prevState => ({
@@ -76,12 +76,12 @@ class App extends Component {
       this.setState({ acc_type: account_type.user_type.toNumber() })
       this.setState({ loading: false})
       // Load Donor bags
-      if(this.state.acc_type == 1){
+      if(this.state.acc_type === 1){
         const arr = await blood.methods.getDbags(this.state.account).call()
         const len = arr.length
         // console.log(this.state.bloodbags[1])
         // console.log(arr[0].toNumber(),arr[1].toNumber(),arr[2].toNumber())
-        for (var i = 0; i < len; i++) {
+        for (i = 0; i < len; i++) {
           this.setState({
             donorbags: [...this.state.donorbags, this.state.bloodbags[arr[i].toNumber()]]
           })
@@ -165,19 +165,19 @@ class App extends Component {
     const acc_type = this.state.acc_type;
     let dothis;
 
-    if (acc_type === 1) {
+    if (acc_type == 1) {
       console.log(this.state.donorbags)
       dothis = <Donor
                 bloodbags={this.state.bloodbags}
                 account={this.state.account} />;
-    } else if(acc_type === 2) {
+    } else if(acc_type == 2) {
       dothis = <Bank
                 bags={this.state.bloodbags}
                 users={this.state.users}
                 usertype={this.state.usertype}
                 account={this.state.account}
                 createBloodbag={this.createBloodbag} />;
-    } else if(acc_type === 3){
+    } else if(acc_type == 3){
       dothis = <Hospital
                 donorbags={this.state.donorbags}
                 bags={this.state.bloodbags}
@@ -187,7 +187,7 @@ class App extends Component {
                 h_placeOrder = {this.h_placeOrder}
                 showInv = {this.showInv}
                 createBloodbag={this.createBloodbag} />;
-    } else if(acc_type === 14){
+    } else if(acc_type == 14){
       dothis = <Admin
                 users={this.state.users}
                 createBank={this.createBank}
