@@ -60,7 +60,7 @@ class Hospital extends Component {
             </thead>
             <tbody id="Options list">
               {this.props.bags.reverse().slice(0, 10).map((bag, key) => {
-                if (bag.owner !== this.props.account) {
+                if (bag.owner !== this.props.account && bag.used !== true) {
                   let a = bag.id.toNumber()
                   console.log(a)
                   return (
