@@ -73,7 +73,15 @@ class App extends Component {
       }))
       }
       const account_type = await blood.methods.usertype(accounts[0]).call()
-      this.setState({ acc_type: account_type.user_type.toNumber() })
+      if (account_type == null) {
+        window.alert('You are not a valid user of the application')
+      }
+      else {
+        this.setState({ acc_type: account_type.user_type.toNumber() })
+      }
+      console.log(accounts[0])
+      console.log(account_type)
+      
       this.setState({ loading: false})
       // Load Donor bags
       if(this.state.acc_type === 1){
@@ -87,6 +95,19 @@ class App extends Component {
           })
           console.log("here are the donor bags")
           console.log(this.state.donorbags)
+        }
+        const arr2 = await blood.methods.getNotification(this.state.account).call()
+        const len2 = arr2.length
+        console.log("notif len ",len2)
+        for (var i = 0; i < len2; i++) {
+          const bag = arr2[i]
+          console.log("bag",bag)
+          this.setState({
+          notification: [...this.state.notification, bag]
+        })
+        console.log("notif len", len)
+        console.log("here are the used bags")
+        console.log(this.state.notification)
         }
       }
       // console.log ho ja bhai
@@ -103,6 +124,7 @@ class App extends Component {
       bloodbags: [],
       donorbags: [],
       users: [],
+      notification: [],
       usertype: {},
       loading: true
     }
@@ -112,6 +134,8 @@ class App extends Component {
     this.h_placeOrder = this.h_placeOrder.bind(this);
     this.createHosp = this.createHosp.bind(this);
     this.showInv = this.showInv.bind(this);
+    this.useBag = this.useBag.bind(this);
+    this.gotIt = this.gotIt.bind(this);
 
   }
 
@@ -147,9 +171,9 @@ class App extends Component {
     const price = window.web3.utils.fromWei('15000000000000000000', 'Ether')
     console.log(id)
     this.state.blood.methods.h_placeOrder(id).send({ from: this.state.account, value: price })
-    // .once('receipt', (receipt) => {
-    //   this.setState({ loading: false})
-    // })
+    .once('receipt', (receipt) => {
+      this.setState({ loading: false})
+    })
   }
 
   showInv( quantity, bloodgroup ) {
@@ -157,8 +181,24 @@ class App extends Component {
     console.log("Bag count is :");
     const len = this.state.bagCount
     for (let i =0; i < len.toNumber(); i++){
-
     }
+  }
+
+  useBag(id) {
+    this.setState({ loading: true})
+    console.log(id)
+    this.state.blood.methods.useBag(id).send({ from: this.state.account})
+    .once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
+  }
+
+  gotIt() {
+    this.setState({ loading: true})
+    this.state.blood.methods.gotIt().send({from: this.state.account})
+    .once('receipt', (receipt) => {
+      this.setState({loading: false })
+    })
   }
 
   render() {
@@ -169,6 +209,9 @@ class App extends Component {
       console.log(this.state.donorbags)
       dothis = <Donor
                 bloodbags={this.state.bloodbags}
+                usertype={this.state.usertype}
+                notification={this.state.notification}
+                gotIt={this.gotIt}
                 account={this.state.account} />;
     } else if(acc_type == 2) {
       dothis = <Bank
@@ -184,6 +227,7 @@ class App extends Component {
                 users={this.state.users}
                 usertype={this.state.usertype}
                 account={this.state.account}
+                useBag = {this.useBag}
                 h_placeOrder = {this.h_placeOrder}
                 showInv = {this.showInv}
                 createBloodbag={this.createBloodbag} />;

@@ -31,7 +31,7 @@ contract('Blood', ([donor, bank, hosp, admin, bank2, hosp2]) => {
       await blood.createBank(bank, "Lilavati blood bank", {from: admin}) // Bank and Hospital added using admin
       await blood.createBank(bank2, "Jamnavati blood bank", {from: admin})
       await blood.createHosp(hosp, "Bachao mereko hospital", {from: admin})
-      await blood.createHosp(hosp, "Ye Marega hospital", {from: admin})
+      await blood.createHosp(hosp2, "Ye Marega hospital", {from: admin})
       var one_day = 3600*24
       donation = Date.now()
       expiry = donation+(30*one_day)
@@ -79,16 +79,22 @@ contract('Blood', ([donor, bank, hosp, admin, bank2, hosp2]) => {
   })
 
   describe('Hospital', async() =>{
-    let event, donation, expiry, result
+    let event, ev2, bag
 
     before(async () => {
       await blood.h_placeOrder(3, { from: hosp, value: web3.utils.toWei('1', 'Ether')})
     })
 
     it('shows inventory', async() => {
-      console.log(await blood.getHbags(hosp))
+      event = await blood.getHbags(hosp, { from: hosp})
+      await blood.useBag(event[0], { from: hosp})
+      ev2 = await blood.getHbags(hosp, { from: hosp})
+      console.log(ev2[0].toNumber())
+      bag = await blood.bloodbags(ev2[0].toNumber())
+      console.log(await bag.used)
+      console.log(await blood.getNotification(donor))
+      await blood.gotIt({from: donor})
+      console.log(await blood.getNotification(donor))
     })
-
   })
-
 })

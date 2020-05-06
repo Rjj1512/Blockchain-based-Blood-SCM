@@ -1,5 +1,4 @@
 pragma solidity >=0.4.21 <0.6.0;
-pragma experimental ABIEncoderV2;
 
 // contract DateTime {
 //         function getYear(uint timestamp) public returns (uint16);
@@ -10,8 +9,12 @@ pragma experimental ABIEncoderV2;
 contract Blood{
     // uint public today;
     // address public dateTimeAddr = 0x66eDEfff0A0c87bA4ca2b8E73BB05787eb35908E;
+<<<<<<< HEAD
     address payable public admin = address(0x993ea21A23fE094aF6D053000EB022dEcd83C513);
     address payable public hospi = address(0x7340C15749cD4efbf70034D565d82b7d908860E2);
+=======
+    address payable public admin = address(0x0935234F7D0851753dC4017985b622AC768EDd42);
+>>>>>>> refs/remotes/origin/master
     // DateTime dateTime = DateTime(dateTimeAddr);
     string public name;
     uint public bagCount = 0;
@@ -21,9 +24,15 @@ contract Blood{
     mapping(address => uint[]) public hospitals; // Bloodbags corresponding to hospitals stored here.
     mapping(address => User) public usertype; // This mapping is to identify the type of user using the website, i.e
                                               // (1 = donor, 2 = bank and 3 = hospital)
+    mapping(address => uint[]) public notification; // Stores pending notification for used bags of donors
     mapping(uint => User) public users; // List of all users
+
     function getDbags(address payable _donor) public view returns (uint256[] memory) {
         return donors[_donor];
+    }
+
+    function getNotification(address payable _donor) public view returns (uint256[] memory) {
+        return notification[_donor];
     }
 
     function getHbags(address payable _hospital) public view returns (uint256[] memory) {
@@ -42,6 +51,8 @@ contract Blood{
 
     struct Bloodbag {
         uint id;
+        bool used;
+        bool first;
         uint donation_date;
         address payable donor;
         address payable bank;
@@ -56,6 +67,7 @@ contract Blood{
 
     event BagCreated(
         uint id,
+        bool used,
         uint donation_date,
         address payable donor,
         address payable bank,
@@ -71,6 +83,7 @@ contract Blood{
 
     event bagPurchased(
         uint id,
+        bool used,
         uint donation_date,
         address payable donor,
         address payable bank,
@@ -112,19 +125,20 @@ contract Blood{
         }
         // Create the Blood bag
         string memory _owner_name = usertype[msg.sender].name;
-        Bloodbag memory temp_bloodbag = Bloodbag(bagCount, _donation_date, _donor, msg.sender, _blood_group, _expiry,
+        Bloodbag memory temp_bloodbag = Bloodbag(bagCount, false, false, _donation_date, _donor, msg.sender, _blood_group, _expiry,
         _owner_name, msg.sender);
         bloodbags[bagCount] = temp_bloodbag;
         // add bag to specific donor's list
         donors[_donor].push(temp_bloodbag.id);
         // Trigger an event
-        emit BagCreated(bagCount, _donation_date, _donor, msg.sender, _blood_group, _expiry,
+        emit BagCreated(bagCount, false, _donation_date, _donor, msg.sender, _blood_group, _expiry,
         _owner_name, msg.sender);
     }
 
     function createBank(address payable _bank, string memory _name) public {
         require(msg.sender == admin,"Not an admin");
         require(_bank != address(0),"No bank address");
+        require(usertype[_bank].user_type != 2,"Bank already exists");
         userCount++;
         usertype[_bank] = User(userCount, 2, "Bank",_bank, _name);
         users[userCount] = User(userCount, 2, "Bank",_bank, _name);
@@ -133,18 +147,16 @@ contract Blood{
     function createHosp(address payable _hosp, string memory _name) public {
         require(msg.sender == admin,"Not an admin");
         require(_hosp != address(0),"No hosp address");
+        require(usertype[_hosp].user_type != 3,"Hospital Already exists");
         userCount++;
         usertype[_hosp] = User(userCount, 3, "Hospital",_hosp, _name);
         users[userCount] = User(userCount, 3, "Hospital",_hosp, _name);
     }
 
-    function compareStrings (string memory a, string memory b) public pure returns (bool) {
-        return (keccak256(abi.encodePacked((a))) == keccak256(abi.encodePacked((b))) );
-    }
-
     function h_placeOrder(uint bag_id) public payable {
         // Fetch the owner
         address payable _seller = bloodbags[bag_id].owner;
+        bool used = bloodbags[bag_id].used;
         require(msg.value > 1, 'Wrong price paid');
         require(usertype[msg.sender].user_type == 3, 'Unauthorized transaction originator');
         address(_seller).transfer(msg.value);
@@ -153,7 +165,19 @@ contract Blood{
         bloodbags[bag_id].owner_name = usertype[msg.sender].name;
         Bloodbag memory _bloodbag = bloodbags[bag_id];
         hospitals[msg.sender].push(_bloodbag.id);
-        emit bagPurchased(_bloodbag.id, _bloodbag.donation_date, _bloodbag.donor, _bloodbag.bank,
+        emit bagPurchased(_bloodbag.id, used, _bloodbag.donation_date, _bloodbag.donor, _bloodbag.bank,
          _bloodbag.blood_group,_bloodbag.expiry,_bloodbag.owner_name,_bloodbag.owner);
+    }
+
+    function useBag(uint bag_id) public {
+        require(usertype[msg.sender].user_type == 3, 'Unauthorized transaction originator');
+        bloodbags[bag_id].used = true;
+        address donor = bloodbags[bag_id].donor;
+        notification[donor].push(bag_id);
+    }
+
+    function gotIt() public {
+        require(usertype[msg.sender].user_type == 1, 'Unauthorized transaction originator');
+        notification[msg.sender].length = 0;
     }
 }
