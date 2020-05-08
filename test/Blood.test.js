@@ -35,12 +35,12 @@ contract('Blood', ([donor, bank, hosp, admin, bank2, hosp2]) => {
       var one_day = 3600*24
       donation = Date.now()
       expiry = donation+(30*one_day)
-      await blood.createBloodbag(donation, donor, "Pranav", "A+", expiry, { from: bank2 })
-      await blood.createBloodbag(donation, donor, "Deep", "AB-", expiry, { from: bank2 })
-      await blood.createBloodbag(donation, donor, "Rahil", "O-", expiry, { from: bank })
-      await blood.createBloodbag(donation, donor, "","AB-", expiry, { from: bank2 })
+      await blood.createBloodbag(donation, donor, "Pranav", "1234567890","A+", expiry, { from: bank2 })
+      await blood.createBloodbag(donation, donor, "Deep", "1234567890", "AB-", expiry, { from: bank2 })
+      await blood.createBloodbag(donation, donor, "Rahil", "1234567890", "O-", expiry, { from: bank })
+      await blood.createBloodbag(donation, donor, "", "1234567890", "AB-", expiry, { from: bank2 })
 
-      result = await blood.createBloodbag(donation, donor, "Pranav", "A+", expiry, { from: bank })
+      result = await blood.createBloodbag(donation, donor, "Pranav", "1234567890", "A+", expiry, { from: bank })
       bagCount = await blood.bagCount()
     })
 
