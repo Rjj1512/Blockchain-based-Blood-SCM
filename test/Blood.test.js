@@ -30,8 +30,8 @@ contract('Blood', ([donor, bank, hosp, admin, bank2, hosp2]) => {
       // console.log(a.toNumber())
       await blood.createBank(bank, "Lilavati blood bank", {from: admin}) // Bank and Hospital added using admin
       await blood.createBank(bank2, "Jamnavati blood bank", {from: admin})
-      await blood.createHosp(hosp, "Bachao mereko hospital", {from: admin})
-      await blood.createHosp(hosp2, "Ye Marega hospital", {from: admin})
+      await blood.createHosp(hosp, "Jaslok hospital", {from: admin})
+      await blood.createHosp(hosp2, "Cooper hospital", {from: admin})
       var one_day = 3600*24
       donation = Date.now()
       expiry = donation+(30*one_day)

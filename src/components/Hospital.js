@@ -21,7 +21,7 @@ class Hospital extends Component {
               </tr>
             </thead>
             <tbody id="Options list">
-              {this.props.bags.reverse().slice(0, 10).map((bag, key) => {
+              {this.props.bags.sort((a, b) => b.expiry - a.expiry).reverse().slice(0, 10).map((bag, key) => {
                 if (bag.owner === this.props.account) {
                   let a = bag.id.toNumber()
                   console.log(a)
@@ -48,6 +48,25 @@ class Hospital extends Component {
         <form onSubmit={(event) => {
           event.preventDefault()
         }}>
+          <div className="form-group row">
+          <label  className="col-md-2 col-form-label"> <h6>Blood group :</h6> </label>
+            <div className="col-sm-4">
+            <input 
+              id="bloodgrp"
+              type="text"
+              ref={(input) => { this.bloodgrp = input }}
+              className="form-control"
+              placeholder="Blood group"
+              required />
+            </div>
+            <button
+                //name={bag.id.toNumber()}
+                className="btn btn-primary"
+                //onClick={(event) => {
+                //this.props.h_placeOrder(event.target.name)
+                //}}
+                >Search Bags</button>
+          </div>
           <table className="table">
             <thead>
               <tr>
@@ -59,8 +78,8 @@ class Hospital extends Component {
               </tr>
             </thead>
             <tbody id="Options list">
-              {this.props.bags.reverse().slice(0, 10).map((bag, key) => {
-                if (bag.owner !== this.props.account && bag.used !== true) {
+              {this.props.bags.sort((a, b) => b.expiry - a.expiry).reverse().slice(0, 10).map((bag, key) => {
+                if (bag.owner !== this.props.account && bag.used !== true /*&& bag.blood_group === "AB-"*/) {
                   let a = bag.id.toNumber()
                   console.log(a)
                   return (

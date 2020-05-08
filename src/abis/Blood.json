@@ -19638,13 +19638,12 @@
         }
       },
       "links": {},
-      "address": "0x071f7E4AeF7cc7E32bb3B3eFdeb08Dbd9A5Ab00B",
-      "transactionHash": "0x0445859ca1d8da3ce07c22a09f849df7bdc3b8c7690dc870cedd96c99f957e18"
+      "address": "0x7De7990fc8D707F61E99f90F194472DF4a035100",
+      "transactionHash": "0xc1976c02933aa31d4a6458d90e755adf857b0fc46cb46bc4ebd54ae66c2f19c6"
     }
   },
   "schemaVersion": "3.0.23",
-  "updatedAt": "2020-05-06T11:26:12.619Z",
-  "networkType": "ethereum",
+  "updatedAt": "2020-05-07T11:15:58.573Z",
   "devdoc": {
     "methods": {}
   },
