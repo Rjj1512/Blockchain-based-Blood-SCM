@@ -9,12 +9,7 @@ import 'animate.css/animate.css'
 import 'react-notifications-component/dist/theme.css'
 
 
-class Donor extends Component {
-
-  createNotif(bag) {
-
-  }
-  
+class Donor extends Component {  
   render() {
     return (
       <div id="content" style={{justifyContent:'center', width:'100%'}}>

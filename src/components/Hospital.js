@@ -8,9 +8,9 @@ class Hospital extends Component {
         <h1 className="head">Welcome <strong>{this.props.usertype[this.props.account].name}.</strong></h1>
         <br />
         <h4 style={{ justifyContent: 'center' }}>Your Current Inventory</h4>
-        <form onSubmit={(event) => {
+        {/* <form onSubmit={(event) => {
           event.preventDefault()
-        }}>>
+        }}>> */}
           <table className="table">
             <thead>
               <tr>
@@ -44,7 +44,8 @@ class Hospital extends Component {
               })}
             </tbody>
           </table>
-        </form>
+      <p>&nbsp;</p>
+        {/* </form>
         <form onSubmit={(event) => {
           event.preventDefault()
         }}>
@@ -67,6 +68,8 @@ class Hospital extends Component {
                 //}}
                 >Search Bags</button>
           </div>
+        }}> */}
+        <h4 style={{ justifyContent: 'center' }}>Available blood bags</h4>
           <table className="table">
             <thead>
               <tr>
@@ -74,6 +77,7 @@ class Hospital extends Component {
                 <th scope="col">Collector Bank's (Name and Address)</th>
                 <th scope="col">Current Owner's Name and Address</th>
                 <th scope="col">Blood Group</th>
+                <th scope="col">Expiry</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
@@ -82,12 +86,14 @@ class Hospital extends Component {
                 if (bag.owner !== this.props.account && bag.used !== true /*&& bag.blood_group === "AB-"*/) {
                   let a = bag.id.toNumber()
                   console.log(a)
+                  console.log(bag.expiry,"expiry")
                   return (
                     <tr key={key}>
                       <th scope="row">{bag.id.toString()}</th>
                       <td>{this.props.usertype[bag.bank].name} <br /> {bag.bank} </td>
                       <td>{this.props.usertype[bag.owner].name} <br /> {bag.owner} </td>
                       <td>{bag.blood_group}</td>
+                      <td>{expiry.slice(0,15)}</td>
                       <th scope="row">
                         <button
                           name={bag.id.toNumber()}
@@ -101,7 +107,7 @@ class Hospital extends Component {
               })}
             </tbody>
           </table>
-        </form>
+        {/* </form> */}
       </div>
     );
   }

@@ -16,9 +16,10 @@ class Bank extends Component {
           event.preventDefault()
           const donor = event.target[0].value
           const donor_name = event.target[1].value
-          const blood_group = event.target[2].value
-          const expiry = event.target[3].value
-          this.props.createBloodbag(donor, donor_name, blood_group, expiry)
+          const donor_number = event.target[2].value
+          const blood_group = event.target[3].value
+          const expiry = event.target[4].value
+          this.props.createBloodbag(donor, donor_name, donor_number, blood_group, expiry)
         }}>
           <div className="form-group row">
           <label className="col-md-2 col-form-label"> <h6>Donor address :</h6> </label>
@@ -36,12 +37,23 @@ class Bank extends Component {
           <label  className="col-md-2 col-form-label"> <h6>Donor name :</h6> </label>
             <div className="col-sm-10">
             <input 
-              id="userName"
+              id="donorName"
               type="text"
-              ref={(input) => { this.userName = input }}
               className="form-control"
               placeholder="Donor's name (if donating first time)"
               />
+            </div>
+          </div>
+          <div className="form-group row">
+          <label  className="col-md-2 col-form-label"> <h6>Donor number :</h6> </label>
+            <div className="col-sm-10">
+            <input 
+              id="donorNo"
+              type="tel"
+              className="form-control"
+              pattern="[0-9]{10}"
+              placeholder="Phone number (10 digit)"
+              required />
             </div>
           </div>
           <div className="form-group row">
@@ -50,7 +62,6 @@ class Bank extends Component {
             <input 
               id="userName"
               type="text"
-              ref={(input) => { this.userName = input }}
               className="form-control"
               placeholder="Blood group"
               required />
@@ -62,7 +73,6 @@ class Bank extends Component {
             <input 
               id="userName"
               type="text"
-              ref={(input) => { this.userName = input }}
               className="form-control"
               placeholder="Number of days till expiry"
               required />

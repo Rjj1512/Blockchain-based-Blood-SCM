@@ -43,6 +43,8 @@ contract Blood{
         string user;
         address payable user_address;
         string name;
+        string number;
+        string blood_group;
     }
 
     struct Bloodbag {
@@ -93,12 +95,12 @@ contract Blood{
     constructor() public{
         name = "Pranav Gor";
         userCount ++;
-        usertype[admin] = User(userCount, 14, "Admin", admin, "Pranav");
-        users[userCount] = User(userCount, 14, "Admin", admin, "Pranav");
+        usertype[admin] = User(userCount, 14, "Admin", admin, "Pranav", '', '');
+        users[userCount] = User(userCount, 14, "Admin", admin, "Pranav", '', '');
     }
 
     function createBloodbag(uint _donation_date, address payable _donor, string memory _donor_name,
-     string memory _blood_group, uint _expiry) public {
+     string memory _donor_number, string memory _blood_group, uint _expiry) public {
         // Require valid params
         string memory d_name = _donor_name;
         require(usertype[msg.sender].user_type == 2, "Not a blood bank.");
@@ -116,8 +118,8 @@ contract Blood{
         // Add donor and set type = 1 if not already exists.
         if (usertype[_donor].id == 0){
             userCount++;
-            usertype[_donor] = User(userCount, 1, "Donor", _donor, d_name);
-            users[userCount] = User(userCount, 1, "Donor",_donor, d_name);
+            usertype[_donor] = User(userCount, 1, "Donor", _donor, d_name,_donor_number, _blood_group);
+            users[userCount] = User(userCount, 1, "Donor", _donor, d_name, _donor_number, _blood_group);
         }
         // Create the Blood bag
         string memory _owner_name = usertype[msg.sender].name;
@@ -136,8 +138,8 @@ contract Blood{
         require(_bank != address(0),"No bank address");
         require(usertype[_bank].user_type != 2,"Bank already exists");
         userCount++;
-        usertype[_bank] = User(userCount, 2, "Bank",_bank, _name);
-        users[userCount] = User(userCount, 2, "Bank",_bank, _name);
+        usertype[_bank] = User(userCount, 2, "Bank",_bank, _name, '', '');
+        users[userCount] = User(userCount, 2, "Bank",_bank, _name, '', '');
     }
 
     function createHosp(address payable _hosp, string memory _name) public {
@@ -145,8 +147,8 @@ contract Blood{
         require(_hosp != address(0),"No hosp address");
         require(usertype[_hosp].user_type != 3,"Hospital Already exists");
         userCount++;
-        usertype[_hosp] = User(userCount, 3, "Hospital",_hosp, _name);
-        users[userCount] = User(userCount, 3, "Hospital",_hosp, _name);
+        usertype[_hosp] = User(userCount, 3, "Hospital",_hosp, _name, '', '');
+        users[userCount] = User(userCount, 3, "Hospital", _hosp, _name, '', '');
     }
 
     function h_placeOrder(uint bag_id) public payable {
