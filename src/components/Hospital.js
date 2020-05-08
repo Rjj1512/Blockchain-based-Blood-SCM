@@ -62,9 +62,8 @@ class Hospital extends Component {
               </tr>
             </thead>
             <tbody id="Options list">
-              {this.props.bags.reverse().sort((a,b) => a.expiry - b .expiry).slice(0, 10).map((bag, key) => {
-                if (bag.owner !== this.props.account) {
-                  const expiry = (new Date(bag.expiry * 1000)).toString()
+              {this.props.bags.reverse().slice(0, 10).map((bag, key) => {
+                if (bag.owner !== this.props.account && bag.used !== true) {
                   let a = bag.id.toNumber()
                   console.log(a)
                   console.log(bag.expiry,"expiry")
