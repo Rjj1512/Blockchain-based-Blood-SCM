@@ -50,7 +50,7 @@ contract Blood{
     struct Bloodbag {
         uint id;
         bool used;
-        bool first;
+        bool expired;
         uint donation_date;
         address payable donor;
         address payable bank;
@@ -66,6 +66,7 @@ contract Blood{
     event BagCreated(
         uint id,
         bool used,
+        bool expired,
         uint donation_date,
         address payable donor,
         address payable bank,
@@ -129,7 +130,7 @@ contract Blood{
         // add bag to specific donor's list
         donors[_donor].push(temp_bloodbag.id);
         // Trigger an event
-        emit BagCreated(bagCount, false, _donation_date, _donor, msg.sender, _blood_group, _expiry,
+        emit BagCreated(bagCount, false, false, _donation_date, _donor, msg.sender, _blood_group, _expiry,
         _owner_name, msg.sender);
     }
 
@@ -170,9 +171,18 @@ contract Blood{
     function useBag(uint bag_id) public {
         require(usertype[msg.sender].user_type == 3, 'Unauthorized transaction originator');
         bloodbags[bag_id].used = true;
+        bloodbags[bag_id].expired = false;
         address donor = bloodbags[bag_id].donor;
         notification[donor].push(bag_id);
     }
+
+    /*function expiredBag(uint bag_id) public {
+        require(usertype[msg.sender].user_type > 1, 'Unauthorized transaction originator');
+        bloodbags[bag_id].expired = true;
+        bloodbags[bag_id].used = false;
+        //address donor = bloodbags[bag_id].donor;
+        //notification[donor].push(bag_id);
+    }*/
 
     function gotIt() public {
         require(usertype[msg.sender].user_type == 1, 'Unauthorized transaction originator');

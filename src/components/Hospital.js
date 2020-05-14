@@ -46,6 +46,12 @@ class Hospital extends Component {
                 if (bag.owner === this.props.account) {
                   let a = bag.id.toNumber()
                   console.log(a)
+                  const expiry = (new Date(bag.expiry * 1000)).toJSON().slice(0,10)
+                  /*if(expiry < new Date().toJSON().slice(0,10)) {
+                    
+                      this.props.expiredBag(bag.id);
+                    //console.log(bag.expired); 
+                  }*/
                   return (
                     <tr key={key}>
                       <th scope="row">{bag.id.toString()}</th>
@@ -55,7 +61,7 @@ class Hospital extends Component {
                       <button
                           name={bag.id.toNumber()}
                           className="btn btn-primary"
-                          disabled={bag.used}
+                          disabled={bag.used && !bag.expired}
                           onClick={(event) => {
                             this.props.useBag(event.target.name);
                           }}>{bag.used ? "Bag used" : "Mark bag as used"}</button></th>
@@ -66,38 +72,16 @@ class Hospital extends Component {
             </tbody>
           </table>
       <p>&nbsp;</p>
-        {/* </form>
-        <form onSubmit={(event) => {
-          event.preventDefault()
-        }}>
-          <div className="form-group row">
-          <label  className="col-md-2 col-form-label"> <h6>Blood group :</h6> </label>
-            <div className="col-sm-4">
-            <input 
-              id="bloodgrp"
-              type="text"
-              ref={(input) => { this.bloodgrp = input }}
-              className="form-control"
-              placeholder="Blood group"
-              required />
-            </div>
-            <button
-                //name={bag.id.toNumber()}
-                className="btn btn-primary"
-                //onClick={(event) => {
-                //this.props.h_placeOrder(event.target.name)
-                //}}
-                >Search Bags</button>
-          </div>
-        }}> */}
-        <h4 style={{ justifyContent: 'center' }}>Available blood bags</h4>
+        
+        
         <List prs = {this.props} show={this.state.show}
          handleClose={this.hideModal} 
          filter={this.state.filter} changeFilter={this.changeFilter}>
         </List>
-        <button className="btn btn-primary float-right" style={{backgroundColor: 'green', display: 'flex', justifyContent: 'right'}} type="button" onClick={this.showModal}>
+        <h4 style={{ justifyContent: 'center' }}>Available blood bags
+        <button className="btn btn-primary float-right" style={{backgroundColor: 'green', display: 'flex', justifyContent: 'right', marginBottom: 10}} type="button" onClick={this.showModal}>
           Search Blood Bags
-        </button>
+        </button></h4>
           <table className="table">
             <thead>
               <tr>
@@ -111,7 +95,8 @@ class Hospital extends Component {
             </thead>
             <tbody id="Options list">
               {this.props.bags.sort((a, b) => b.expiry - a.expiry).reverse().slice(0, 10).map((bag, key) => {
-                if (bag.owner !== this.props.account && bag.used !== true) {
+                if (bag.owner !== this.props.account && bag.used !== true && 
+                  (new Date(bag.expiry * 1000).toJSON().slice(0,10)) >= new Date().toJSON().slice(0,10)) {
                   let a = bag.id.toNumber()
                   console.log(a)
                   console.log(bag.expiry,"expiry")
@@ -160,13 +145,14 @@ const List = ({ handleClose, show, prs, filter, changeFilter}) => {
               id="bloodtype"
               type="text"
               className="form-control"
-              placeholder="Blood Group" />
+              placeholder="Blood Group" 
+              style={{marginLeft:10}}/> 
           </div>        
           <button type="submit" className="btn btn-primary">Search</button>
         </form>
         </div>
         <br/>
-      <table className="table">
+      <table className="table" style={{marginLeft:10}}>
         <thead>
           <tr>
             <th scope="col">#</th>
@@ -179,7 +165,8 @@ const List = ({ handleClose, show, prs, filter, changeFilter}) => {
         </thead>
         <tbody id="Bags list">
           {prs.bags.sort((a, b) => b.expiry - a.expiry).reverse().map((bag, key) => {
-            if (bag.owner !== prs.account && bag.used !== true) {
+            if (bag.owner !== prs.account && bag.used !== true && 
+              (new Date(bag.expiry * 1000).toJSON().slice(0,10)) >= new Date().toJSON().slice(0,10)) {
               /*console.log(bag.user)
               if (bag.user_type != 1){
                 return true

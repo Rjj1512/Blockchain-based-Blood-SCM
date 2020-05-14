@@ -9,7 +9,7 @@ class Bank extends Component {
           
           <h1 className="head">Welcome <strong>{this.props.usertype[this.props.account].name}.</strong></h1>
           <br/>
-        <h3 >Add Bank</h3>
+        <h3 >Add Bags</h3>
         <br/>
         {/* <div className="button-container" > */}
         <form onSubmit={(event) => {
@@ -97,6 +97,12 @@ class Bank extends Component {
           {/* {console.log(this.props.usertype)} */}
             { this.props.bags.reverse().slice(0,10).map((bag, key) => {
               if (bag.bank === this.props.account){
+                const expiry = (new Date(bag.expiry * 1000)).toJSON().slice(0,10)
+                /*if(expiry < new Date().toJSON().slice(0,10)) {
+                  
+                  this.props. 
+                 
+                }*/
               return(
                 <tr key={key}>
                   <th scope="row">{bag.id.toString()} Address:</th>

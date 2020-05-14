@@ -67,7 +67,8 @@ class Donor extends Component {
                       <th scope="col">Collector Bank</th>
                       <th scope="col">Owner</th>
                       <th scope="col">Blood Group</th>
-                      <th scope="col">Expiry</th>
+                      <th scope="col">Expiry Date</th>
+                      <th scope="col">Expiry Status</th>
                       <th scope="col">Usage Status</th>
                     </tr>
                   </thead>
@@ -78,6 +79,7 @@ class Donor extends Component {
                       <td>{bag.owner}</td>
                       <td>{bag.blood_group}</td>
                       <td>{expiry.slice(0,25)}</td>
+                      <td>{bag.expired.toString()}</td>
                       <td>{bag.used.toString()}</td>
                   </tbody>
                 </table>
