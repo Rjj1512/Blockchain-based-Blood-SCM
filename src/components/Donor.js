@@ -49,7 +49,7 @@ class Donor extends Component {
         <h3 >Your BloodBags</h3>
         <br/>
             { this.props.bloodbags.reverse().slice(0,10).map((bag, key) => {
-              const expiry = (new Date(bag.expiry * 1000)).toString()
+              const expiry = (new Date(bag.expiry * 1000)).toJSON().slice(0,10)
               const trig = '<h4 > Bag ID :- ' + (bag.id).toString() + ' <h4> <h6>click to view details</h6>'
               if (bag.donor === this.props.account){
               return(
@@ -67,7 +67,6 @@ class Donor extends Component {
                       <th scope="col">Collector Bank</th>
                       <th scope="col">Owner</th>
                       <th scope="col">Blood Group</th>
-                      <th scope="col">Expiry Date</th>
                       <th scope="col">Expiry Status</th>
                       <th scope="col">Usage Status</th>
                     </tr>
@@ -78,16 +77,14 @@ class Donor extends Component {
                       <td>{bag.bank}</td>
                       <td>{bag.owner}</td>
                       <td>{bag.blood_group}</td>
-                      <td>{expiry.slice(0,25)}</td>
-                      <td>{bag.expired.toString()}</td>
+                      <td>{expiry < new Date().toJSON().slice(0,10) ? "true" : "false"}</td>
                       <td>{bag.used.toString()}</td>
                   </tbody>
                 </table>
                 </Collapsible>
               )
               }
-            })}
-            
+            })} 
       </div>
       
     );

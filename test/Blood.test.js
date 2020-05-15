@@ -28,19 +28,19 @@ contract('Blood', ([donor, bank, hosp, admin, bank2, hosp2]) => {
       const a = await blood.usertype(admin).user_type
       console.log(await blood.usertype(admin))
       // console.log(a.toNumber())
-      await blood.createBank(bank, "Lilavati blood bank", {from: admin}) // Bank and Hospital added using admin
-      await blood.createBank(bank2, "Jamnavati blood bank", {from: admin})
-      await blood.createHosp(hosp, "Jaslok hospital", {from: admin})
-      await blood.createHosp(hosp2, "Cooper hospital", {from: admin})
+      await blood.createBank(bank, "Lilavati blood bank", "Mumbai", {from: admin}) // Bank and Hospital added using admin
+      await blood.createBank(bank2, "Jamnavati blood bank", "Mumbai", {from: admin})
+      await blood.createHosp(hosp, "Jaslok hospital", "Mumbai", {from: admin})
+      await blood.createHosp(hosp2, "Cooper hospital", "Mumbai", {from: admin})
       var one_day = 3600*24
       donation = Date.now()
       expiry = donation+(30*one_day)
-      await blood.createBloodbag(donation, donor, "Pranav", "1234567890","A+", expiry, { from: bank2 })
-      await blood.createBloodbag(donation, donor, "Deep", "1234567890", "AB-", expiry, { from: bank2 })
-      await blood.createBloodbag(donation, donor, "Rahil", "1234567890", "O-", expiry, { from: bank })
-      await blood.createBloodbag(donation, donor, "", "1234567890", "AB-", expiry, { from: bank2 })
+      await blood.createBloodbag(donation, donor, "Pranav", "1234567890","A+", expiry, "Mumbai", { from: bank2 })
+      await blood.createBloodbag(donation, donor, "Deep", "1234567890", "AB-", expiry, "Mumbai", { from: bank2 })
+      await blood.createBloodbag(donation, donor, "Rahil", "1234567890", "O-", expiry, "Mumbai", { from: bank })
+      await blood.createBloodbag(donation, donor, "", "1234567890", "AB-", expiry, "Mumbai", { from: bank2 })
 
-      result = await blood.createBloodbag(donation, donor, "Pranav", "1234567890", "A+", expiry, { from: bank })
+      result = await blood.createBloodbag(donation, donor, "Pranav", "1234567890", "A+", expiry, "Mumbai", { from: bank })
       bagCount = await blood.bagCount()
     })
 
@@ -58,10 +58,10 @@ contract('Blood', ([donor, bank, hosp, admin, bank2, hosp2]) => {
 
       // FAILURE: Product must have a name
       await blood.createBloodbag(donation, "0x0", "A+", expiry,
-      "Lilavati blood bank", { from: bank }).should.be.rejected;
+      "Lilavati blood bank", "Mumbai", { from: bank }).should.be.rejected;
       // FAILURE: Product must have a price
       await blood.createBloodbag(donation, donor, "", expiry,
-      "Lilavati blood bank", { from: bank }).should.be.rejected;
+      "Lilavati blood bank", "Mumbai", { from: bank }).should.be.rejected;
     })
 
     it('get donors bags', async () => {

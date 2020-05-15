@@ -19,7 +19,8 @@ class Bank extends Component {
           const donor_number = event.target[2].value
           const blood_group = event.target[3].value
           const expiry = event.target[4].value
-          this.props.createBloodbag(donor, donor_name, donor_number, blood_group, expiry)
+          const city = event.target[5].value
+          this.props.createBloodbag(donor, donor_name, donor_number, blood_group, expiry, city.toLowerCase())
         }}>
           <div className="form-group row">
           <label className="col-md-2 col-form-label"> <h6>Donor address :</h6> </label>
@@ -78,6 +79,17 @@ class Bank extends Component {
               required />
             </div>
           </div>
+          <div className="form-group row">
+          <label  className="col-md-2 col-form-label"> <h6>City :</h6> </label>
+            <div className="col-sm-10">
+            <input 
+              id="userCity"
+              type="text"
+              className="form-control"
+              placeholder="Name of city"
+              required />
+            </div>
+          </div>
           <button style={{justifyContent:'center'}} type="submit" className="btn btn-primary">Add Blood Bag</button>
         </form>
         {/* </div> */}
@@ -91,6 +103,7 @@ class Bank extends Component {
               <th scope="col">Collector Bank</th>
               <th scope="col">Owner</th>
               <th scope="col">Blood Group</th>
+              <th scope="col">City</th>
             </tr>
           </thead>
           <tbody id="Blood bag list">
@@ -105,11 +118,12 @@ class Bank extends Component {
                 }*/
               return(
                 <tr key={key}>
-                  <th scope="row">{bag.id.toString()} Address:</th>
-                  <td>{this.props.usertype[bag.donor].name} {bag.donor}</td>
-                  <td>{this.props.usertype[bag.bank].name} {bag.bank}</td>
-                  <td>{this.props.usertype[bag.owner].name} {bag.owner}</td>
+                  <th scope="row">{bag.id.toString()} <br></br>Address:</th>
+                  <td>{this.props.usertype[bag.donor].name} <br></br>{bag.donor}</td>
+                  <td>{this.props.usertype[bag.bank].name} <br></br>{bag.bank}</td>
+                  <td>{this.props.usertype[bag.owner].name} <br></br> {bag.owner}</td>
                   <td>{bag.blood_group}</td>
+                  <td>{bag.city.charAt(0).toUpperCase() + bag.city.slice(1)}</td>
                 </tr>
               )
               }

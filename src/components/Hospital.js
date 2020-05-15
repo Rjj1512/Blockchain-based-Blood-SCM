@@ -7,7 +7,7 @@ class Hospital extends Component {
   
   constructor(props) {
     super(props)
-    this.state = {show: false, filter: ''}
+    this.state = {show: false, filter: '', cty: ''}
   }
 
   showModal = () => {
@@ -19,8 +19,8 @@ class Hospital extends Component {
     this.setState({ show: false });
   };
 
-  changeFilter = (type) => {
-    this.setState({ filter: type})
+  changeFilter = (type1, type2) => {
+    this.setState({ filter: type1, cty: type2})
   }
   
   render() {
@@ -38,7 +38,8 @@ class Hospital extends Component {
                 <th scope="col">#</th>
                 <th scope="col">Collector Bank's (Name and Address)</th>
                 <th scope="col">Blood Group</th>
-                <th scope="col">Used</th>
+                <th scope="col">Expiry</th>
+                <th scope="col">Usage Status</th>
               </tr>
             </thead>
             <tbody id="Options list">
@@ -46,7 +47,7 @@ class Hospital extends Component {
                 if (bag.owner === this.props.account) {
                   let a = bag.id.toNumber()
                   console.log(a)
-                  const expiry = (new Date(bag.expiry * 1000)).toJSON().slice(0,10)
+                  const expiry = (new Date(bag.expiry * 1000))
                   /*if(expiry < new Date().toJSON().slice(0,10)) {
                     
                       this.props.expiredBag(bag.id);
@@ -57,15 +58,16 @@ class Hospital extends Component {
                       <th scope="row">{bag.id.toString()}</th>
                       <td>{bag.owner_name} <br /> {bag.bank} </td>
                       <td>{bag.blood_group}</td>
+                      <td>{expiry.toString().slice(0,15)}</td>
                       <th scope="row">
                       <button
                           name={bag.id.toNumber()}
                           className="btn btn-primary"
-                          disabled={bag.used && !bag.expired}
+                          disabled={expiry.toJSON().slice(0,10) >= new Date().toJSON().slice(0,10) ? bag.used : true}
                           onClick={(event) => {
                             this.props.useBag(event.target.name);
-                          }}>{bag.used ? "Bag used" : "Mark bag as used"}</button></th>
-                    </tr>
+                          }}>{expiry.toJSON().slice(0,10) < new Date().toJSON().slice(0,10) ? "Bag Expired" : (bag.used ? "Bag used" : "Mark bag as used")}</button></th>
+                    </tr> //WILL UPDATE bag.expired once function gets working
                   )
                 }
               })}
@@ -76,7 +78,8 @@ class Hospital extends Component {
         
         <List prs = {this.props} show={this.state.show}
          handleClose={this.hideModal} 
-         filter={this.state.filter} changeFilter={this.changeFilter}>
+         filter={this.state.filter} cty={this.state.cty}
+         changeFilter={this.changeFilter}>
         </List>
         <h4 style={{ justifyContent: 'center' }}>Available blood bags
         <button className="btn btn-primary float-right" style={{backgroundColor: 'green', display: 'flex', justifyContent: 'right', marginBottom: 10}} type="button" onClick={this.showModal}>
@@ -89,6 +92,7 @@ class Hospital extends Component {
                 <th scope="col">Collector Bank's (Name and Address)</th>
                 <th scope="col">Current Owner's Name and Address</th>
                 <th scope="col">Blood Group</th>
+                <th scope="col">City</th>
                 <th scope="col">Expiry</th>
                 <th scope="col">Action</th>
               </tr>
@@ -107,6 +111,7 @@ class Hospital extends Component {
                       <td>{this.props.usertype[bag.bank].name} <br /> {bag.bank} </td>
                       <td>{this.props.usertype[bag.owner].name} <br /> {bag.owner} </td>
                       <td>{bag.blood_group}</td>
+                      <td>{bag.city.charAt(0).toUpperCase() + bag.city.slice(1)}</td>
                       <td>{expiry.slice(0,15)}</td>
                       <th scope="row">
                         <button
@@ -127,7 +132,7 @@ class Hospital extends Component {
   }
 }
 
-const List = ({ handleClose, show, prs, filter, changeFilter}) => {
+const List = ({ handleClose, show, prs, filter, cty, changeFilter}) => {
   const showHideClassname = show ? "modal display-block" : "modal display-none";
   var i = 0
   return (
@@ -137,8 +142,9 @@ const List = ({ handleClose, show, prs, filter, changeFilter}) => {
       <div>
       <form class='form-inline' onSubmit={(event) => {
           event.preventDefault()
-          const type = event.target[0].value
-          changeFilter(type)
+          const type1 = event.target[0].value
+          const type2 = event.target[1].value
+          changeFilter(type1, type2.toLowerCase())
         }}>
           <div className="form-group mr-sm-2">
             <input 
@@ -147,8 +153,16 @@ const List = ({ handleClose, show, prs, filter, changeFilter}) => {
               className="form-control"
               placeholder="Blood Group" 
               style={{marginLeft:10}}/> 
+          </div>
+          <div className="form-group mr-sm-2">
+            <input 
+              id="bloodcity"
+              type="text"
+              className="form-control"
+              placeholder="City" 
+              style={{marginLeft:10}}/> 
           </div>        
-          <button type="submit" className="btn btn-primary">Search</button>
+          <button type="submit" className="btn btn-primary" style={{marginLeft:10}}>Search</button>
         </form>
         </div>
         <br/>
@@ -159,6 +173,7 @@ const List = ({ handleClose, show, prs, filter, changeFilter}) => {
             <th scope="col">Collector Bank's (Name and Address)</th>
             <th scope="col">Current Owner's Name and Address</th>
             <th scope="col">Blood Group</th>
+            <th scope="col">City</th>
             <th scope="col">Expiry</th>
             <th scope="col">Action</th>
           </tr>
@@ -176,7 +191,13 @@ const List = ({ handleClose, show, prs, filter, changeFilter}) => {
                   return true
                 }
               }
+              if (cty !=''){
+                if (bag.city != cty.toLowerCase()) {
+                  return true
+                }
+              }
               console.log(filter,bag.blood_group)
+              console.log(cty,bag.city)
                 i = i+1
               console.log(bag.expiry,"expiry")
               const expiry = (new Date(bag.expiry * 1000)).toString()
@@ -186,6 +207,7 @@ const List = ({ handleClose, show, prs, filter, changeFilter}) => {
                 <td>{prs.usertype[bag.bank].name} <br /> {bag.bank} </td>
                 <td>{prs.usertype[bag.owner].name} <br /> {bag.owner} </td>
                 <td>{bag.blood_group}</td>
+                <td>{bag.city.charAt(0).toUpperCase() + bag.city.slice(1)}</td>
                 <td>{expiry.slice(0,15)}</td>
                 <th scope="row">
                   <button

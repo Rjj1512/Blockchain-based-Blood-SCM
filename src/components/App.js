@@ -139,28 +139,28 @@ class App extends Component {
 
   }
 
-  createBloodbag(donor, donor_name, donor_number, bloodgroup, exp) {
+  createBloodbag(donor, donor_name, donor_number, bloodgroup, exp, city) {
     var today = new Date().getTime();
     var donation = Math.round(today / 1000);
     var expiry = donation + 86400*exp;
     this.setState({ loading: true })
-    this.state.blood.methods.createBloodbag(donation, donor, donor_name, donor_number, bloodgroup, expiry).send({ from: this.state.account })
+    this.state.blood.methods.createBloodbag(donation, donor, donor_name, donor_number, bloodgroup, expiry, city).send({ from: this.state.account })
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
   }
 
-  createBank(bank, name) {
+  createBank(bank, name, city) {
     this.setState({ loading: true })
-    this.state.blood.methods.createBank(bank,name).send({ from: this.state.account })
+    this.state.blood.methods.createBank(bank,name, city).send({ from: this.state.account })
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })
   }
 
-  createHosp(hosp, name) {
+  createHosp(hosp, name, city) {
     this.setState({ loading: true })
-    this.state.blood.methods.createHosp(hosp,name).send({ from: this.state.account })
+    this.state.blood.methods.createHosp(hosp,name, city).send({ from: this.state.account })
     .once('receipt', (receipt) => {
       this.setState({ loading: false })
     })

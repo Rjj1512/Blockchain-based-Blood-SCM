@@ -40,7 +40,8 @@ class Admin extends Component {
           event.preventDefault()
           const name = event.target[0].value
           const address = event.target[1].value
-          this.props.createBank(address, name)
+          const city = event.target[2].value
+          this.props.createBank(address, name, city.toLowerCase())
         }}>
           <div className="form-group mr-sm-2">
             <input 
@@ -60,6 +61,15 @@ class Admin extends Component {
               placeholder="User Address"
               required />
           </div>
+          <div className="form-group mr-sm-2">
+            <input
+              id="userCity"
+              type="text"
+              ref={(input) => { this.userCity = input}}
+              className="form-control"
+              placeholder="User City"
+              required />
+          </div>
           <button type="submit" className="btn btn-primary">Add Bank</button>
         </form>
         </div>
@@ -71,7 +81,8 @@ class Admin extends Component {
           event.preventDefault()
           const name = event.target[0].value
           const address = event.target[1].value
-          this.props.createHosp(address,name)
+          const city = event.target[2].value
+          this.props.createHosp(address,name,city.toLowerCase())
         }}>
           <div className="form-group mr-sm-2">
             <input
@@ -91,6 +102,15 @@ class Admin extends Component {
               placeholder="User Address"
               required />
           </div>
+          <div className="form-group mr-sm-2">
+            <input
+              id="userCity"
+              type="text"
+              ref={(input) => { this.userCity = input }}
+              className="form-control"
+              placeholder="User City"
+              required />
+          </div>
           <button type="submit" className="btn btn-primary">Add Hospital</button>
         </form>
         </div>
@@ -103,6 +123,7 @@ class Admin extends Component {
               <th scope="col">Name</th>
               <th scope="col">Address</th>
               <th scope="col">User Type</th>
+              <th scope="col">User City</th>
             </tr>
           </thead>
           <tbody id="User list">
@@ -113,6 +134,7 @@ class Admin extends Component {
                   <td>{user.name}</td>
                   <td>{user.user_address}</td>
                   <td>{user.user}</td>
+                  <td>{user.city.charAt(0).toUpperCase() + user.city.slice(1)}</td>
                 </tr>
               )
             })}
