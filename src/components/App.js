@@ -49,6 +49,16 @@ class App extends Component {
       // Load bloodbags
       for (var i = 1; i <= bagCount; i++) {
         const bag = await blood.methods.bloodbags(i).call()
+        const expiry = (new Date(bag.expiry * 1000))
+        if(expiry.toJSON().slice(0,10) < new Date("2020-05-21").toJSON().slice(0,10)) {
+          
+          const v = await blood.methods.expiredBag(bag.id).call();
+          console.log(v, bag.expired, bag.id);
+        } 
+      }
+      for (var i = 1; i <= bagCount; i++) {
+        const bag = await blood.methods.bloodbags(i).call()
+        console.log(bag.expired, bag.id)
         this.setState({
           bloodbags: [...this.state.bloodbags, bag]
         })

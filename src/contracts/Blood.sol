@@ -39,7 +39,7 @@ contract Blood{
         return hospitals[_hospital];
     }
 
-    function expiredBag(uint256 bag_id) public returns (bool) {
+    function expiredBag(uint bag_id) public returns (bool) {
         bloodbags[bag_id].expired = true;
         bloodbags[bag_id].used = false;
         //address donor = bloodbags[bag_id].donor;
