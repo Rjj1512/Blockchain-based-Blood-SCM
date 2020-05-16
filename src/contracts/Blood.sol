@@ -23,10 +23,6 @@ contract Blood{
     mapping(address => uint[]) public notification; // Stores pending notification for used bags of donors
     mapping(uint => User) public users; // List of all users
 
-   /* function getBags() public view returns (mapping(uint=> Bloodbag) memory) {
-        return bloodbags;
-    }*/
-
     function getDbags(address payable _donor) public view returns (uint256[] memory) {
         return donors[_donor];
     }
@@ -39,13 +35,6 @@ contract Blood{
         return hospitals[_hospital];
     }
 
-    function expiredBag(uint bag_id) public returns (bool) {
-        bloodbags[bag_id].expired = true;
-        bloodbags[bag_id].used = false;
-        //address donor = bloodbags[bag_id].donor;
-        //notification[donor].push(bag_id);
-        return bloodbags[bag_id].expired;
-    }
 
     // ALL STRUCTS
 
@@ -94,6 +83,20 @@ contract Blood{
     event arr(uint[] array);
 
     event bagPurchased(
+        uint id,
+        bool used,
+        bool expired,
+        uint donation_date,
+        address payable donor,
+        address payable bank,
+        string blood_group,
+        uint expiry,
+        string owner_name,
+        address payable owner,
+        string city
+    );
+
+    event expBag(
         uint id,
         bool used,
         bool expired,
@@ -200,5 +203,19 @@ contract Blood{
     function gotIt() public {
         require(usertype[msg.sender].user_type == 1, 'Unauthorized transaction originator');
         notification[msg.sender].length = 0;
+    }
+
+    function expiredBag(uint[] memory ids, uint s) public returns (uint) {
+        require(usertype[msg.sender].user_type == 14, 'Unauthorized transaction originator');
+        require(s != 0, 'No Expired bags');
+        Bloodbag memory _bloodbag;
+        for(uint i = 0; i < s; i++) {
+            bloodbags[ids[i]].expired = true;
+            bloodbags[ids[i]].used = false;
+            _bloodbag = bloodbags[ids[i]];
+            emit expBag(_bloodbag.id, _bloodbag.used, _bloodbag.expired, _bloodbag.donation_date, _bloodbag.donor, _bloodbag.bank,
+            _bloodbag.blood_group,_bloodbag.expiry,_bloodbag.owner_name,_bloodbag.owner, _bloodbag.city);
+        }
+        return s;
     }
 }

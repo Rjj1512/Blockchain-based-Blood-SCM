@@ -100,9 +100,11 @@ class Bank extends Component {
             <tr>
               <th scope="col">#</th>
               <th scope="col">Donor</th>
-              <th scope="col">Collector Bank</th>
               <th scope="col">Owner</th>
               <th scope="col">Blood Group</th>
+              <th scope="col">Expiration Date</th>
+              <th scope="col">Expiry Status</th>
+              <th scope="col">Usage Status</th>
               <th scope="col">City</th>
             </tr>
           </thead>
@@ -110,19 +112,17 @@ class Bank extends Component {
           {/* {console.log(this.props.usertype)} */}
             { this.props.bags.reverse().slice(0,10).map((bag, key) => {
               if (bag.bank === this.props.account){
-                const expiry = (new Date(bag.expiry * 1000)).toJSON().slice(0,10)
-                /*if(expiry < new Date().toJSON().slice(0,10)) {
-                  
-                  this.props. 
-                 
-                }*/
+                const expiry = (new Date(bag.expiry * 1000))
               return(
                 <tr key={key}>
                   <th scope="row">{bag.id.toString()} <br></br>Address:</th>
                   <td>{this.props.usertype[bag.donor].name} <br></br>{bag.donor}</td>
-                  <td>{this.props.usertype[bag.bank].name} <br></br>{bag.bank}</td>
                   <td>{this.props.usertype[bag.owner].name} <br></br> {bag.owner}</td>
                   <td>{bag.blood_group}</td>
+                  <td>{expiry.toString().slice(0,15)}<br></br>{expiry.toString().slice(16,24
+                    )}</td>
+                  <td>{bag.expired ? "true" : expiry.toJSON().slice(0,10) < new Date().toJSON().slice(0,10) ? "true" : "false"}</td>
+                  <td>{bag.used.toString()}</td>
                   <td>{bag.city.charAt(0).toUpperCase() + bag.city.slice(1)}</td>
                 </tr>
               )

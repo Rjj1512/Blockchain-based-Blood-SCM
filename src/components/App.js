@@ -47,18 +47,10 @@ class App extends Component {
       const userCount = await blood.methods.userCount().call()
       this.setState({ userCount: userCount })
       // Load bloodbags
+      
       for (var i = 1; i <= bagCount; i++) {
-        const bag = await blood.methods.bloodbags(i).call()
-        const expiry = (new Date(bag.expiry * 1000))
-        if(expiry.toJSON().slice(0,10) < new Date("2020-05-21").toJSON().slice(0,10)) {
-          
-          const v = await blood.methods.expiredBag(bag.id).call();
-          console.log(v, bag.expired, bag.id);
-        } 
-      }
-      for (var i = 1; i <= bagCount; i++) {
-        const bag = await blood.methods.bloodbags(i).call()
-        console.log(bag.expired, bag.id)
+        const bag = await blood.methods.bloodbags(i).call();
+        console.log(bag.expired, "Expiration")
         this.setState({
           bloodbags: [...this.state.bloodbags, bag]
         })
@@ -90,7 +82,7 @@ class App extends Component {
         this.setState({ acc_type: account_type.user_type.toNumber() })
       }
       console.log(accounts[0])
-      console.log(account_type)
+      console.log(this.state.acc_type,"type of user")
       
       this.setState({ loading: false})
       // Load Donor bags
@@ -118,6 +110,23 @@ class App extends Component {
         console.log("notif len", len)
         console.log("here are the used bags")
         console.log(this.state.notification)
+        }
+      } 
+      else if(this.state.acc_type === 14) {
+        const exp = [];
+        for (var i = 1; i <= bagCount; i++) {
+          const bag = await blood.methods.bloodbags(i).call()
+          const expiry = (new Date(bag.expiry * 1000))
+          if(!bag.used) {
+            if(expiry.toJSON().slice(0,10) < new Date().toJSON().slice(0,10) && !bag.expired) {
+              exp.push(bag.id.toNumber());
+            }
+          } 
+        }
+        const s = exp.length;
+        if(s > 0) {
+          const v = await blood.methods.expiredBag(exp, s).send({from : this.state.account});
+          console.log(v.toNumber() == exp.length);
         }
       }
       // console.log ho ja bhai

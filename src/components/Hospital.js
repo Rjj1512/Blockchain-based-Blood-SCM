@@ -48,11 +48,6 @@ class Hospital extends Component {
                   let a = bag.id.toNumber()
                   console.log(a)
                   const expiry = (new Date(bag.expiry * 1000))
-                  /*if(expiry < new Date().toJSON().slice(0,10)) {
-                    
-                      this.props.expiredBag(bag.id);
-                    //console.log(bag.expired); 
-                  }*/
                   return (
                     <tr key={key}>
                       <th scope="row">{bag.id.toString()}</th>
@@ -63,11 +58,11 @@ class Hospital extends Component {
                       <button
                           name={bag.id.toNumber()}
                           className="btn btn-primary"
-                          disabled={expiry.toJSON().slice(0,10) >= new Date().toJSON().slice(0,10) ? bag.used : true}
+                          disabled={bag.expired || expiry.toJSON().slice(0,10) < new Date().toJSON().slice(0,10) ? true : bag.used ? true : false}
                           onClick={(event) => {
                             this.props.useBag(event.target.name);
-                          }}>{expiry.toJSON().slice(0,10) < new Date().toJSON().slice(0,10) ? "Bag Expired" : (bag.used ? "Bag used" : "Mark bag as used")}</button></th>
-                    </tr> //WILL UPDATE bag.expired once function gets working
+                          }}>{(bag.expired || expiry < new Date().toJSON().slice(0,10)) ? "Bag Expired" : (bag.used ? "Bag used" : "Mark bag as used")}</button></th>
+                    </tr>
                   )
                 }
               })}
@@ -100,7 +95,8 @@ class Hospital extends Component {
             <tbody id="Options list">
               {this.props.bags.sort((a, b) => b.expiry - a.expiry).reverse().slice(0, 10).map((bag, key) => {
                 if (bag.owner !== this.props.account && bag.used !== true && 
-                  (new Date(bag.expiry * 1000).toJSON().slice(0,10)) >= new Date().toJSON().slice(0,10)) {
+                  (!bag.expired && (new Date(bag.expiry * 1000).toJSON().slice(0,10)) >= new Date().toJSON().slice(0,10))) 
+                  {
                   let a = bag.id.toNumber()
                   console.log(a)
                   console.log(bag.expiry,"expiry")
@@ -181,11 +177,8 @@ const List = ({ handleClose, show, prs, filter, cty, changeFilter}) => {
         <tbody id="Bags list">
           {prs.bags.sort((a, b) => b.expiry - a.expiry).reverse().map((bag, key) => {
             if (bag.owner !== prs.account && bag.used !== true && 
-              (new Date(bag.expiry * 1000).toJSON().slice(0,10)) >= new Date().toJSON().slice(0,10)) {
-              /*console.log(bag.user)
-              if (bag.user_type != 1){
-                return true
-              }*/
+              (!bag.expired && (new Date(bag.expiry * 1000).toJSON().slice(0,10)) >= new Date().toJSON().slice(0,10)))
+              {
               if (filter !=''){
                 if (bag.blood_group != filter) {
                   return true

@@ -77,7 +77,7 @@ class Donor extends Component {
                       <td>{bag.bank}</td>
                       <td>{bag.owner}</td>
                       <td>{bag.blood_group}</td>
-                      <td>{expiry < new Date().toJSON().slice(0,10) ? "true" : "false"}</td>
+                      <td>{bag.expired ? "true" : expiry < new Date().toJSON().slice(0,10) ? "true" : "false"}</td>
                       <td>{bag.used.toString()}</td>
                   </tbody>
                 </table>
